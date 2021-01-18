@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dapper;
-using Raketti.Server.Data;
-using Raketti.Shared;
+using Prevent22.Server.Data;
+using Prevent22.Shared;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Raketti.Server.Controllers
+namespace Prevent22.Server.Controllers
 {
 	[Auth]
 	[Route("api/[controller]")]

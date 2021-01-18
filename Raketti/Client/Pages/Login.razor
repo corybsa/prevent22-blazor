@@ -1,5 +1,5 @@
 @page "/login"
-@using Raketti.Shared
+@using Prevent22.Shared
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
 @inject Services.IAuthService AuthService
@@ -62,8 +62,8 @@
 	protected override async Task OnInitializedAsync()
 	{
 		// listen for browser resize
-		Raketti.Client.Services.BrowserService.OnResize += BrowserHasResized;
-		await js.InvokeAsync<object>("raketti.registerResizeCallback");
+		Prevent22.Client.Services.BrowserService.OnResize += BrowserHasResized;
+		await js.InvokeAsync<object>("Prevent22.registerResizeCallback");
 
 		windowHeight = await BrowserService.GetHeight();
 	}

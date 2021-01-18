@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Raketti.Client.Services
+namespace Prevent22.Client.Services
 {
 	public class BrowserService
 	{
@@ -24,12 +24,12 @@ namespace Raketti.Client.Services
 
 		public async Task<int> GetHeight()
 		{
-			return await _js.InvokeAsync<int>("raketti.getHeight");
+			return await _js.InvokeAsync<int>("Prevent22.getHeight");
 		}
 
 		public async Task<int> GetWidth()
 		{
-			return await _js.InvokeAsync<int>("raketti.getWidth");
+			return await _js.InvokeAsync<int>("Prevent22.getWidth");
 		}
 	}
 }

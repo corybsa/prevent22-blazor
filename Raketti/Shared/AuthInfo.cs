@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Raketti.Shared
+namespace Prevent22.Shared
 {
 	public class AuthInfo
 	{

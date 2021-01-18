@@ -1,10 +1,10 @@
-﻿using Raketti.Shared;
+﻿using Prevent22.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Raketti.Client.Services
+namespace Prevent22.Client.Services
 {
 	public interface IAuthService
 	{

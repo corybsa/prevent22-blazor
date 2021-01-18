@@ -88,8 +88,8 @@
 		Flyout.OnChange += StateHasChanged;
 
 		// listen for browser resize
-		Raketti.Client.Services.BrowserService.OnResize += BrowserHasResized;
-		await js.InvokeAsync<object>("raketti.registerResizeCallback");
+		Prevent22.Client.Services.BrowserService.OnResize += BrowserHasResized;
+		await js.InvokeAsync<object>("Prevent22.registerResizeCallback");
 
 		windowHeight = await BrowserService.GetHeight();
 	}
@@ -105,6 +105,6 @@
 	public void Dispose()
 	{
 		// stop listening for browser resize
-		Raketti.Client.Services.BrowserService.OnResize -= BrowserHasResized;
+		Prevent22.Client.Services.BrowserService.OnResize -= BrowserHasResized;
 	}
 }

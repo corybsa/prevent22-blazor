@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Raketti.Server
+namespace Prevent22.Server
 {
 	public class Program
 	{

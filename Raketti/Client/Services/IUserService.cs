@@ -1,7 +1,7 @@
-﻿using Raketti.Shared;
+﻿using Prevent22.Shared;
 using System.Threading.Tasks;
 
-namespace Raketti.Client.Services
+namespace Prevent22.Client.Services
 {
 	public interface IUserService
 	{

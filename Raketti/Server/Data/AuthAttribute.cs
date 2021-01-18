@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Raketti.Shared;
+using Prevent22.Shared;
 
-namespace Raketti.Server.Data
+namespace Prevent22.Server.Data
 {
 	public class AuthAttribute : AuthorizeAttribute, IAuthorizationFilter
 	{

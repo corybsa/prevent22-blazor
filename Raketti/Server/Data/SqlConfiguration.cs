@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Raketti.Server.Data
+namespace Prevent22.Server.Data
 {
 	public class SqlConfiguration
 	{

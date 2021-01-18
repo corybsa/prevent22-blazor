@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Raketti.Shared;
+using Prevent22.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Raketti.Client.Auth
+namespace Prevent22.Client.Auth
 {
 	public class AdminRequirement : AuthorizationHandler<AdminRequirement>, IAuthorizationRequirement
 	{

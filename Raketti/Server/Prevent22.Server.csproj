@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\Raketti.Client.csproj" />
-    <ProjectReference Include="..\Shared\Raketti.Shared.csproj" />
+    <ProjectReference Include="..\Client\Prevent22.Client.csproj" />
+    <ProjectReference Include="..\Shared\Prevent22.Shared.csproj" />
   </ItemGroup>
 
     <ItemGroup>

@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Blazored.Toast;
-using Raketti.Client.Services;
+using Prevent22.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
-using Raketti.Client.Auth;
+using Prevent22.Client.Auth;
 
-namespace Raketti.Client
+namespace Prevent22.Client
 {
 	public class Program
 	{

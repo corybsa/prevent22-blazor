@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Raketti.Client.Auth
+namespace Prevent22.Client.Auth
 {
 	public static class Policies
 	{

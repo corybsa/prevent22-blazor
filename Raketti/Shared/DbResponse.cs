@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Raketti.Shared
+namespace Prevent22.Shared
 {
 	public class DbResponse<T>
 	{

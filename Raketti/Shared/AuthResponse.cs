@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Raketti.Shared
+namespace Prevent22.Shared
 {
 	public class AuthResponse<T>
 	{

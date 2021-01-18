@@ -1,6 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Raketti.Shared;
+using Prevent22.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Raketti.Client
+namespace Prevent22.Client
 {
 	public class CustomAuthStateProvider : AuthenticationStateProvider
 	{

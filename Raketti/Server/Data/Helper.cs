@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using Dapper;
-using Raketti.Server.Data;
-using Raketti.Shared;
+using Prevent22.Server.Data;
+using Prevent22.Shared;
 using System.Text;
 
-namespace Raketti.Server
+namespace Prevent22.Server
 {
 	public class Helper
 	{

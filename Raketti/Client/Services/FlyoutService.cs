@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Raketti.Client.Shared;
+using Prevent22.Client.Shared;
 
-namespace Raketti.Client.Services
+namespace Prevent22.Client.Services
 {
 	public class FlyoutService : IFlyoutService
 	{

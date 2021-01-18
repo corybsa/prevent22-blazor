@@ -1,11 +1,11 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
-using Raketti.Shared;
+using Prevent22.Shared;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace Raketti.Client.Services
+namespace Prevent22.Client.Services
 {
 	public class AuthService : IAuthService
 	{

@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Novell.Directory.Ldap;
-using Raketti.Server.Data;
-using Raketti.Shared;
+using Prevent22.Server.Data;
+using Prevent22.Shared;
 
-namespace Raketti.Server.Controllers
+namespace Prevent22.Server.Controllers
 {
 	[Auth]
 	[Route("api/[controller]")]
