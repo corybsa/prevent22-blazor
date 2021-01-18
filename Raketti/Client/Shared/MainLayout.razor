@@ -1,0 +1,110 @@
+@layout TelerikLayout
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject Services.IFlyoutService Flyout
+@inject Services.BrowserService BrowserService
+@inject Services.IAuthService AuthService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Microsoft.JSInterop.IJSRuntime js
+
+<style>
+	#flyout {
+		background: white;
+		position: fixed;
+		height: @(windowHeight)px;
+		width: 100%;
+		right: -100%;
+		display: block;
+		transition: 0.3s linear;
+		z-index: 99999;
+		box-shadow: black 2px 0px 10px;
+	}
+
+	#flyout.open {
+		right: 0;
+	}
+
+	#flyout.closed {
+		right: -100%;
+	}
+
+	@@media screen and (min-width: 1px) {
+		#flyout.open {
+			width: 100%;
+		}
+	}
+
+	@@media screen and (min-width: 592px) {
+		#flyout.open {
+			width: 70%;
+		}
+	}
+
+	@@media screen and (min-width: 769px) {
+		#flyout.open {
+			width: 50%;
+		}
+	}
+
+	@@media screen and (min-width: 992px) {
+		#flyout.open {
+			width: 45%;
+		}
+	}
+</style>
+
+<BlazoredToasts />
+
+<AuthorizeView>
+	<Authorized>
+		<div class="sidebar">
+			<NavMenu />
+		</div>
+
+		<div class="main">
+			<div class="top-row px-4">
+				<a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+			</div>
+
+			<div class="content px-4">
+				@Body
+			</div>
+		</div>
+
+		<div id="flyout" class="@(Flyout.IsOpen ? "open" : "closed")">
+			<Flyout />
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		@Body
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+	private int windowHeight;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Flyout.OnChange += StateHasChanged;
+
+		// listen for browser resize
+		Raketti.Client.Services.BrowserService.OnResize += BrowserHasResized;
+		await js.InvokeAsync<object>("raketti.registerResizeCallback");
+
+		windowHeight = await BrowserService.GetHeight();
+	}
+
+	private async Task BrowserHasResized()
+	{
+		windowHeight = await BrowserService.GetHeight();
+
+		// let blazor know that the state changed
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		// stop listening for browser resize
+		Raketti.Client.Services.BrowserService.OnResize -= BrowserHasResized;
+	}
+}
