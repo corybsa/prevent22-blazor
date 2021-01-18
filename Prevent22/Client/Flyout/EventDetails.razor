@@ -1,0 +1,12 @@
+﻿@using Prevent22.Shared
+
+<p>Title: @Data.Title</p>
+<p>Description: @Data.Description</p>
+<p>Start: @Data.Start</p>
+<p>End: @Data.End</p>
+<p>Is All Day: @(Data.IsAllDay ? "Yes" : "No")</p>
+
+@code {
+	[Parameter]
+	public Event Data { get; set; }
+}

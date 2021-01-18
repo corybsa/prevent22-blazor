@@ -1,0 +1,15 @@
+﻿@using Prevent22.Shared
+
+<p>User ID: @Data.UserId</p>
+<p>First name: @Data.FirstName</p>
+<p>Last name: @Data.LastName</p>
+<p>Username: @Data.Username</p>
+<p>Role ID: @Data.RoleId</p>
+<p>Email: @Data.Email</p>
+<p>Title: @Data.Title</p>
+<p>Is Active: @Data.IsActive</p>
+
+@code {
+	[Parameter]
+	public User Data { get; set; }
+}

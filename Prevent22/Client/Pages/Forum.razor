@@ -1,0 +1,37 @@
+﻿@page "/forum"
+@inject IToastService ToastService
+@using Prevent22.Shared
+
+<style>
+	div.post:hover {
+		cursor: pointer;
+		background: lightgrey;
+	}
+
+	div.post > p {
+		margin: 0;
+	}
+</style>
+
+<TelerikListView Data="@posts" Pageable="true">
+	<HeaderTemplate>
+		<h3>Forum</h3>
+	</HeaderTemplate>
+	<Template>
+		<div class="post" @onclick="@(() => showInfo(context))">
+			<p>@context.Title - @context.Author</p>
+		</div>
+	</Template>
+</TelerikListView>
+
+@code {
+	private List<ForumPost> posts = new List<ForumPost> {
+		new ForumPost("Test 1", "tester"),
+		new ForumPost("Test2", "chester the tester")
+	};
+
+	private void showInfo(ForumPost post)
+	{
+		ToastService.ShowInfo(post.Title, post.Author);
+	}
+}

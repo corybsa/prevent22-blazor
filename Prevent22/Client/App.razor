@@ -1,0 +1,49 @@
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Services.IAuthService AuthService
+@inject IToastService ToastService
+
+<CascadingAuthenticationState>
+	<Router AppAssembly="@typeof(Program).Assembly">
+		<Found Context="routeData">
+			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+				<NotAuthorized>
+					<Prevent22.Client.Pages.Error />
+				</NotAuthorized>
+			</AuthorizeRouteView>
+		</Found>
+		<NotFound>
+			<LayoutView Layout="@typeof(MainLayout)">
+				<p>Sorry, there's nothing at this address.</p>
+			</LayoutView>
+		</NotFound>
+	</Router>
+</CascadingAuthenticationState>
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		// make sure we know who's logged in
+		if (await LocalStorage.ContainKeyAsync("userId"))
+		{
+			try
+			{
+				// Get the user id from localStorage and ask SQL who it is.
+				var userId = await LocalStorage.GetItemAsync<int>("userId");
+				var res = await AuthService.Check(userId);
+
+				if (!res.Success)
+				{
+					ToastService.ShowError(res.Info, "Error");
+				}
+				else
+				{
+					Services.AuthService.IsLoggedIn = true;
+				}
+			}
+			catch (Exception e)
+			{
+				ToastService.ShowError(e.Message, "Error");
+			}
+		}
+	}
+}

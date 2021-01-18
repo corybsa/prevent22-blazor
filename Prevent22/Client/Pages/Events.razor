@@ -1,0 +1,35 @@
+﻿@page "/events"
+@inject Services.IFlyoutService Flyout
+@using Prevent22.Shared
+
+<TelerikScheduler Data="@events" AllowUpdate="true" AllowDelete="true" OnEdit="@EditHandler" OnDelete="@DeleteAppointment">
+	<SchedulerViews>
+		<SchedulerMonthView />
+	</SchedulerViews>
+</TelerikScheduler>
+
+@code {
+	public List<Event> events = new List<Event>()
+{
+		new Event("event 1", "description 1", new DateTime(2021, 1, 10, 0, 0, 0), new DateTime(2021, 1, 10, 5, 0, 0), false),
+		new Event("event 2", "description 2", new DateTime(2021, 1, 11, 0, 0, 0), new DateTime(2021, 1, 11, 5, 0, 0), false)
+	};
+
+	void EditHandler(SchedulerEditEventArgs args)
+	{
+		Event e = args.Item as Event;
+
+		// an edit operation
+		if (!args.IsNew)
+		{
+			Flyout.Open<Event>($"Info for {e.Title}", typeof(Client.Flyout.EventDetails), e);
+		}
+
+		// prevent default window from opening
+		args.IsCancelled = true;
+	}
+
+	async Task DeleteAppointment(SchedulerDeleteEventArgs args) { 
+		Console.WriteLine("test");
+	}
+}

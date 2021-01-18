@@ -1,0 +1,78 @@
+@page "/login"
+@using Prevent22.Shared
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+@inject Services.IAuthService AuthService
+@inject Services.BrowserService BrowserService
+@inject IToastService ToastService
+@inject NavigationManager NavigationManager
+@inject Microsoft.JSInterop.IJSRuntime js
+
+<div class="main" style="background-image: url('images/color_pencils_vertical.jpg'); background-size: 100%;">
+	<div class="container-fluid">
+		<div class="row align-items-center justify-content-center" style="height: @(windowHeight)px">
+			<div class="col-4">
+				<div class="card">
+					<div class="card-body">
+						<EditForm Model="@user" OnValidSubmit="HandleLogin">
+							<DataAnnotationsValidator />
+							<div class="form-group">
+								<label for="username">Username</label>
+								<InputText id="username" @bind-Value="user.Username" class="form-control" />
+								<ValidationMessage For="@(() => user.Username)" />
+							</div>
+							<div class="form-group">
+								<label for="password">Password</label>
+								<InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />
+								<ValidationMessage For="@(() => user.Password)" />
+							</div>
+							<button type="submit" class="btn btn-primary">Login</button>
+						</EditForm>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	private AuthInfo user = new AuthInfo();
+	private int windowHeight;
+
+	public async void HandleLogin()
+	{
+		var result = await AuthService.Login(user);
+
+		if (result.Success)
+		{
+			// hopefully clear password from memory
+			user.Password = null;
+			Services.AuthService.IsLoggedIn = true;
+			await LocalStorage.SetItemAsync<string>("userId", result.Data);
+			await LocalStorage.SetItemAsync<string>("authToken", result.Message);
+			await AuthStateProvider.GetAuthenticationStateAsync();
+			NavigationManager.NavigateTo("");
+		}
+		else
+		{
+			ToastService.ShowError(result.Message);
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		// listen for browser resize
+		Prevent22.Client.Services.BrowserService.OnResize += BrowserHasResized;
+		await js.InvokeAsync<object>("Prevent22.registerResizeCallback");
+
+		windowHeight = await BrowserService.GetHeight();
+	}
+
+	private async Task BrowserHasResized()
+	{
+		windowHeight = await BrowserService.GetHeight();
+
+		// let blazor know that the state changed so it rerenders the ui
+		StateHasChanged();
+	}
+}
