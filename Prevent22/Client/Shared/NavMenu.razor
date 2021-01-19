@@ -28,8 +28,8 @@
 				<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showResourcesDropDown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
 					Resources
 				</a>
-				<div class="dropdown-menu @ResourcesDropDownClass" aria-labelledby="resourcesDropdown">
-					<a class="dropdown-item" href="#">Job Opportunities</a>
+				<div class="dropdown-menu @ResourcesDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
+					<a class="dropdown-item" href="/resources/jobs">Job Opportunities</a>
 					<a class="dropdown-item" href="#">Resume Templates</a>
 					<a class="dropdown-item" href="#">Mental Health Clinics</a>
 				</div>
