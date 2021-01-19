@@ -5,7 +5,7 @@
 
 <style>
 	.carousel-item > img {
-		height: 300px;
+		height: 250px;
 		width: 100%;
 		object-fit: cover;
 		margin: auto;
@@ -31,6 +31,30 @@
 		color: white;
 		padding-top: 30px;
 		padding-bottom: 20px;
+	}
+
+	@@media (min-width: 640px) {
+		.carousel-item > img {
+			height: 300px;
+		}
+	}
+
+	@@media (min-width: 768px) {
+		.carousel-item > img {
+			height: 325px;
+		}
+	}
+
+	@@media (min-width: 992px) {
+		.carousel-item > img {
+			height: 350px;
+		}
+	}
+
+	@@media (min-width: 1200px) {
+		.carousel-item > img {
+			height: 400px;
+		}
 	}
 </style>
 
@@ -86,15 +110,15 @@
 <div id="home-info" class="container-fluid">
 	<div class="container">
 		<div class="row">
-			<div class="col-4">
+			<div class="col-12 col-md-4">
 				<h3>What we do</h3>
 				<p>Prevent 22 Veterans is here to educate veterans, active military and the community on the struggles veterans face when transitioning out of the military. We want to bring the “22 a day” statistic down to 0.</p>
 			</div>
-			<div class="col-4">
+			<div class="col-12 col-md-4">
 				<h3>Who we are</h3>
 				<p>We”re regular people who are motivated by a love for others to protect them from harm and find the help they need. Some of us have served our country but all of us have been affected by suicide. We understand how devastating it can be and we will stop at nothing to provide the highest level of help we can.</p>
 			</div>
-			<div class="col-4">
+			<div class="col-12 col-md-4">
 				<h3>Support the cause</h3>
 				<p>Directly help veterans by donating to our cause and letting us handle the hard part! All donations go back into the community. We keep none of the the donations for ourselves. We use the donations to help with rent, food, gas, and anything else someone may need help with.</p>
 			</div>

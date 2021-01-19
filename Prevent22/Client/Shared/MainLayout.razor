@@ -28,6 +28,32 @@
 		right: -100%;
 	}
 
+	.socials {
+		padding-top: 1.5rem;
+		padding-bottom: 1.5rem;
+		background-color: hsl(0, 0%, 5%);
+	}
+
+	.socials button {
+		background-color: #ed3f39;
+		border-color: #ed3f39;
+	}
+
+	.socials button a {
+		color: white;
+	}
+
+	footer {
+		background-color: black;
+		padding-top: 1.5rem;
+		padding-bottom: 1.5rem;
+	}
+
+	footer > div {
+		font-size: 1.2rem;
+		color: white;
+	}
+
 	@@media screen and (min-width: 1px) {
 		#flyout.open {
 			width: 100%;
@@ -61,6 +87,22 @@
 	<div class="content px-4" style="padding: 0 !important;">
 		@Body
 	</div>
+
+	<div class="container-fluid socials">
+		<div class="container text-center">
+			<button class="btn btn-danger">
+				<a href="https://www.facebook.com/Prevent-22-Veterans-100535335071697" target="_blank" rel="noreferrer">
+					<i class="fab fa-facebook"></i>
+				</a>
+			</button>
+		</div>
+	</div>
+
+	<footer class="container-fluid">
+		<div class="container text-center">
+			Copyright &copy; @year by Prevent 22 Veterans 501(c)(19). All rights reserved.
+		</div>
+	</footer>
 </div>
 
 <div id="flyout" class="@(Flyout.IsOpen ? "open" : "closed")">
@@ -69,6 +111,7 @@
 
 @code {
 	private int windowHeight;
+	private int year = DateTime.Now.Year;
 
 	protected override async Task OnInitializedAsync()
 	{
