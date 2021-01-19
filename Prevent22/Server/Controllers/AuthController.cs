@@ -104,7 +104,8 @@ namespace Prevent22.Server.Controllers
 		[HttpPost("register")]
 		public async Task<IActionResult> Register(UserRegister user)
 		{
-			if(user.Password.CompareTo(user.ConfirmPassword) != 0) {
+			if (user.Password.CompareTo(user.ConfirmPassword) != 0)
+			{
 				return BadRequest("Passwords do not match.");
 			}
 
@@ -118,22 +119,30 @@ namespace Prevent22.Server.Controllers
 				hash = $"{iterations}.{salt}.{key}";
 			}
 
-			Console.WriteLine(CheckHash(hash, user.Password));
+			var response = new AuthResponse<string>();
 
-			var response = new DbResponse<User>();
-
-			try {
+			try
+			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Create);
 				parameters.Add("Username", user.Username);
 				parameters.Add("Hash", hash);
-			} catch(Exception e) {
+				var res = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data.First();
+
+				response.Data = res.UserId.ToString();
+				response.Message = CreateToken(res);
+
+				// save user info on client
+				Client.Services.UserService.user = res;
+			}
+			catch (Exception e)
+			{
 				response.Success = false;
-				response.Info = e.Message;
+				response.Message = e.Message;
 				return StatusCode(StatusCodes.Status500InternalServerError, response);
 			}
 
-			return Ok(new User());
+			return Ok(response);
 		}
 
 		private string CreateToken(User user)

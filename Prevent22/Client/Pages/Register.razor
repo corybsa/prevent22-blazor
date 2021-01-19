@@ -4,6 +4,8 @@
 @inject NavigationManager NavigationManager
 @inject Services.BrowserService BrowserService
 @inject Microsoft.JSInterop.IJSRuntime js
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
 @using Prevent22.Shared
 
 <div class="main" style="background-image: url('images/color_pencils_vertical.jpg'); background-size: 100%;">
@@ -48,10 +50,19 @@
 		{
 			var res = await AuthService.Register(user);
 
-			if (!res.Success)
+			if (res.Success)
 			{
-				ToastService.ShowError(res.Info, "An error occurred. Please contact an admin.");
+				// hopefully clear password from memory
+				user.Password = null;
+				Services.AuthService.IsLoggedIn = true;
+				await LocalStorage.SetItemAsync<string>(LocalStorageKey.UserId, res.Data);
+				await LocalStorage.SetItemAsync<string>(LocalStorageKey.Token, res.Message);
+				await AuthStateProvider.GetAuthenticationStateAsync();
 				NavigationManager.NavigateTo("");
+			}
+			else
+			{
+				ToastService.ShowError(res.Message);
 			}
 		}
 		catch (Exception e)

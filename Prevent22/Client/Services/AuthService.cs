@@ -43,10 +43,10 @@ namespace Prevent22.Client.Services
 			return await result.Content.ReadFromJsonAsync<DbResponse<User>>();
 		}
 
-		public async Task<DbResponse<User>> Register(UserRegister user)
+		public async Task<AuthResponse<string>> Register(UserRegister user)
 		{
 			var result = await _http.PostAsJsonAsync("api/auth/register", user);
-			return await result.Content.ReadFromJsonAsync<DbResponse<User>>();
+			return await result.Content.ReadFromJsonAsync<AuthResponse<string>>();
 		}
 	}
 }

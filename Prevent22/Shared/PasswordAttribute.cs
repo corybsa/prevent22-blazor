@@ -4,19 +4,21 @@ using System.Text.RegularExpressions;
 
 namespace Prevent22.Shared
 {
-	[AttributeUsage(AttributeTargets.Property)]
+	[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 	public class PasswordAttribute : ValidationAttribute
 	{
-		public PasswordAttribute() {
-			ErrorMessage = "Passwords must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).";
+		private string Pattern;
+
+		public PasswordAttribute(string pattern) {
+			Pattern = pattern;
 		}
 		
 		public override bool IsValid(object? value)
 		{
 			string password;
 
-			// at least one uppercase letter, one lowercase letter, one number and one special character
-			var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]$");
+			// at least one lowercase letter, one uppercase letter, one number and one special character
+			var regex = new Regex(Pattern);
 
 			if (value != null)
 			{
