@@ -18,6 +18,11 @@ a.p22-link {
     font-weight: bold;
 }
 
+a.p22-link > i,
+a.p22-link > svg {
+    color: black;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
