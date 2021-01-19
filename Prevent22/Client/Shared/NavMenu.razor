@@ -2,7 +2,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @using Prevent22.Shared
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 	<a class="navbar-brand" href="#">
 		<img src="./images/P22Veterans_Logo-Color.png" alt="Prevent 22 Veterans" class="nav-logo">
 	</a>
@@ -25,17 +25,17 @@
 				<NavLink class="nav-link" href="/forum">Forum</NavLink>
 			</li>
 			<li class="nav-item dropdown @ResourcesDropDownClass">
-				<a class="nav-link dropdown-toggle" href="#" role="button" aria-haspopup="true" aria-expanded="@showResourcesDropDown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
+				<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showResourcesDropDown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
 					Resources
 				</a>
-				<div class="dropdown-menu @ResourcesDropDownClass" aria-labelledby="navbarDropdown">
+				<div class="dropdown-menu @ResourcesDropDownClass" aria-labelledby="resourcesDropdown">
 					<a class="dropdown-item" href="#">Job Opportunities</a>
 					<a class="dropdown-item" href="#">Resume Templates</a>
 					<a class="dropdown-item" href="#">Mental Health Clinics</a>
 				</div>
 			</li>
 			<li class="nav-item">
-				<NavLink class="nav-link" href="#">About Us</NavLink>
+				<NavLink class="nav-link" href="/404">About Us</NavLink>
 			</li>
 			<AuthorizeView>
 				<Authorized>
@@ -50,19 +50,27 @@
 				</NotAuthorized>
 			</AuthorizeView>
 		</ul>
-		<form class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		</form>
+		@*<div class="dropdown @SearchDropDownClass">
+			<button class="btn btn-secondary dropdown-toggle" aria-expanded="@showSearchDropDown" @onclick="(() => showSearchDropDown = !showSearchDropDown)">
+				<div class="dropdown-menu dropdown-menu-right @SearchDropDownClass" aria-labelledby="resourcesDropdown" style="width: 290px;">
+					<form class="form-inline my-2 my-lg-0" style="margin-left: 10px; margin-right: 10px;">
+						<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+					</form>
+				</div>
+			</button>
+		</div>*@
 	</div>
 </nav>
 
 @code {
 	private bool collapseNavMenu = true;
 	private bool showResourcesDropDown = false;
+	private bool showSearchDropDown = false;
 
 	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 	private string ResourcesDropDownClass => showResourcesDropDown ? "show" : null;
+	private string SearchDropDownClass => showSearchDropDown ? "show" : null;
 
 	private void ToggleNavMenu()
 	{

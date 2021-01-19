@@ -191,7 +191,7 @@ a.p22-link {
     }
 
     .navbar-toggler {
-        display: none;
+        /*display: none;*/
     }
 
     .sidebar .collapse {
