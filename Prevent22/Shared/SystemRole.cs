@@ -6,8 +6,8 @@ namespace Prevent22.Shared
 {
 	public static class SystemRole
 	{
-		public const int GlobalAdmin = 1;
-		public const int Admin = 2;
-		public const int Teacher = 3;
+		public const int Admin = 1;
+		public const int Moderator = 2;
+		public const int User = 3;
 	}
 }

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Novell.Directory.Ldap;
+using System.Security.Cryptography;
 using Prevent22.Server.Data;
 using Prevent22.Shared;
 
@@ -51,54 +51,28 @@ namespace Prevent22.Server.Controllers
 				return BadRequest(response);
 			}
 
-			using (var cn = new LdapConnection())
+			var parameters = new DynamicParameters();
+			parameters.Add("StatementType", StatementType.Get);
+			parameters.Add("Username", auth.Username);
+
+			try
 			{
-				try
-				{
-					// connect to ldap
-					cn.Connect("ds05", 389);
+				// get user info from database
+				var user = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data.First();
+				response.Data = user.UserId.ToString();
+				response.Message = CreateToken(user);
 
-					// check username and password
-					cn.Bind($"LCSD\\{auth.Username}", auth.Password);
-					cn.Disconnect();
-				}
-				catch (LdapException e)
-				{
-					// username and password combination were wrong
-					response.Success = false;
-					response.Message = e.Message;
-					return BadRequest(response);
-				}
-				finally
-				{
-					// close connection to ldap
-					cn.Disconnect();
-					cn.Dispose();
-				}
-
-				var parameters = new DynamicParameters();
-				parameters.Add("StatementType", StatementType.Get);
-				parameters.Add("Username", auth.Username);
-
-				try
-				{
-					// get user info from database
-					var user = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data.First();
-					response.Data = user.UserId.ToString();
-					response.Message = CreateToken(user);
-
-					// save user info on client
-					Client.Services.UserService.user = user;
-				}
-				catch (Exception e)
-				{
-					response.Success = false;
-					response.Message = e.Message;
-					return StatusCode(StatusCodes.Status500InternalServerError, response);
-				}
-
-				return Ok(response);
+				// save user info on client
+				Client.Services.UserService.user = user;
 			}
+			catch (Exception e)
+			{
+				response.Success = false;
+				response.Message = e.Message;
+				return StatusCode(StatusCodes.Status500InternalServerError, response);
+			}
+
+			return Ok(response);
 		}
 
 		[HttpPost("check")]
@@ -126,6 +100,42 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[AllowAnonymous]
+		[HttpPost("register")]
+		public async Task<IActionResult> Register(UserRegister user)
+		{
+			if(user.Password.CompareTo(user.ConfirmPassword) != 0) {
+				return BadRequest("Passwords do not match.");
+			}
+
+			string hash;
+			int iterations = _configuration.GetValue<int>("AppSettings:HashIterations");
+
+			using (var pbkdf2 = new Rfc2898DeriveBytes(user.Password, 32, iterations, HashAlgorithmName.SHA512))
+			{
+				var key = Convert.ToBase64String(pbkdf2.GetBytes(80));
+				var salt = Convert.ToBase64String(pbkdf2.Salt);
+				hash = $"{iterations}.{salt}.{key}";
+			}
+
+			Console.WriteLine(CheckHash(hash, user.Password));
+
+			var response = new DbResponse<User>();
+
+			try {
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Create);
+				parameters.Add("Username", user.Username);
+				parameters.Add("Hash", hash);
+			} catch(Exception e) {
+				response.Success = false;
+				response.Info = e.Message;
+				return StatusCode(StatusCodes.Status500InternalServerError, response);
+			}
+
+			return Ok(new User());
+		}
+
 		private string CreateToken(User user)
 		{
 			var claims = new List<Claim>
@@ -148,6 +158,28 @@ namespace Prevent22.Server.Controllers
 			var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
 			return jwt;
+		}
+
+		private bool CheckHash(string hash, string password)
+		{
+			var parts = hash.Split('.', 3);
+
+			if (parts.Length != 3)
+			{
+				return false;
+			}
+
+			var iterations = Convert.ToInt32(parts[0]);
+			var salt = Convert.FromBase64String(parts[1]);
+			var key = Convert.FromBase64String(parts[2]);
+
+			using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA512))
+			{
+				var keyToCheck = pbkdf2.GetBytes(80);
+				var verified = keyToCheck.SequenceEqual(key);
+
+				return verified;
+			}
 		}
 	}
 }

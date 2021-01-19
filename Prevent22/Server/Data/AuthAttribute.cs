@@ -32,7 +32,7 @@ namespace Prevent22.Server.Data
 			}
 
 			// Global admin can access everything
-			if (user.RoleId == SystemRole.GlobalAdmin)
+			if (user.RoleId == SystemRole.Admin)
 			{
 				return;
 			}

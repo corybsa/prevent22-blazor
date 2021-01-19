@@ -1,5 +1,4 @@
 @page "/login"
-@using Prevent22.Shared
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
 @inject Services.IAuthService AuthService
@@ -7,6 +6,7 @@
 @inject IToastService ToastService
 @inject NavigationManager NavigationManager
 @inject Microsoft.JSInterop.IJSRuntime js
+@using Prevent22.Shared
 
 <div class="main" style="background-image: url('images/color_pencils_vertical.jpg'); background-size: 100%;">
 	<div class="container-fluid">
@@ -28,6 +28,7 @@
 							</div>
 							<button type="submit" class="btn btn-primary">Login</button>
 						</EditForm>
+						<p>Or <a href="/register">create an account</a>.</p>
 					</div>
 				</div>
 			</div>
@@ -48,8 +49,8 @@
 			// hopefully clear password from memory
 			user.Password = null;
 			Services.AuthService.IsLoggedIn = true;
-			await LocalStorage.SetItemAsync<string>("userId", result.Data);
-			await LocalStorage.SetItemAsync<string>("authToken", result.Message);
+			await LocalStorage.SetItemAsync<string>(LocalStorageKey.UserId, result.Data);
+			await LocalStorage.SetItemAsync<string>(LocalStorageKey.Token, result.Message);
 			await AuthStateProvider.GetAuthenticationStateAsync();
 			NavigationManager.NavigateTo("");
 		}

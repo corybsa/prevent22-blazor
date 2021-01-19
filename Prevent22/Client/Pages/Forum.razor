@@ -26,8 +26,8 @@
 
 @code {
 	private List<ForumPost> posts = new List<ForumPost> {
-		new ForumPost("Test 1", "tester"),
-		new ForumPost("Test2", "chester the tester")
+		new ForumPost() { Title = "Test 1", Author = "tester" },
+		new ForumPost() { Title = "Test2", Author = "chester the tester" }
 	};
 
 	private void showInfo(ForumPost post)

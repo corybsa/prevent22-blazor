@@ -20,7 +20,7 @@ namespace Prevent22.Server.Controllers
 			_helper = new Helper(sql);
 		}
 
-		[Auth(Roles = new[] { SystemRole.GlobalAdmin })]
+		[Auth(Roles = new[] { SystemRole.Admin })]
 		[HttpGet("users")]
 		public async Task<IActionResult> GetUsers()
 		{

@@ -9,17 +9,18 @@ namespace Prevent22.Shared
 	public class User
 	{
 		public int UserId { get; set; }
+		public string Username { get; set; }
+		public string Password { get; set; }
+		public string Hash { get; set; }
+		public int RoleId { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		public string Username { get; set; }
-		public int RoleId { get; set; }
 		public string Email { get; set; }
-		public string Title{ get; set; }
-		public bool IsActive { get; set; }
-
-		public override string ToString()
-		{
-			return $"{FirstName} {LastName} ({UserId})";
-		}
+		public string Country { get; set; }
+		public string State { get; set; }
+		public string City{ get; set; }
+		public string Address { get; set; }
+		public string Phone { get; set; }
+		public bool IsBanned { get; set; }
 	}
 }

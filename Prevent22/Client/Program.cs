@@ -36,9 +36,9 @@ namespace Prevent22.Client
 			// Set up policies and handlers
 			builder.Services.AddAuthorizationCore(config =>
 			{
-				config.AddPolicy(Policies.IsGlobalAdmin, policy => policy.Requirements.Add(new GlobalAdminRequirement()));
+				config.AddPolicy(Policies.IsGlobalAdmin, policy => policy.Requirements.Add(new ModeratorRequirement()));
 				config.AddPolicy(Policies.IsAdmin, policy => policy.Requirements.Add(new AdminRequirement()));
-				config.AddPolicy(Policies.IsTeacher, policy => policy.Requirements.Add(new TeacherRequirement()));
+				config.AddPolicy(Policies.IsTeacher, policy => policy.Requirements.Add(new UserRequirement()));
 			});
 
 			builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();

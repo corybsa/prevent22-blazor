@@ -16,7 +16,7 @@ namespace Prevent22.Client.Auth
 			{
 				var roleId = int.Parse(context.User.FindFirst(c => c.Type == ClaimTypes.Role).Value);
 
-				if (roleId == SystemRole.GlobalAdmin || roleId == SystemRole.Admin)
+				if (roleId == SystemRole.Admin)
 				{
 					context.Succeed(requirement);
 				}

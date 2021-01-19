@@ -1,6 +1,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject Services.IAuthService AuthService
 @inject IToastService ToastService
+@using Prevent22.Shared
 
 <CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(Program).Assembly">
@@ -23,12 +24,12 @@
 	protected override async Task OnInitializedAsync()
 	{
 		// make sure we know who's logged in
-		if (await LocalStorage.ContainKeyAsync("userId"))
+		if (await LocalStorage.ContainKeyAsync(LocalStorageKey.UserId))
 		{
 			try
 			{
 				// Get the user id from localStorage and ask SQL who it is.
-				var userId = await LocalStorage.GetItemAsync<int>("userId");
+				var userId = await LocalStorage.GetItemAsync<int>(LocalStorageKey.UserId);
 				var res = await AuthService.Check(userId);
 
 				if (!res.Success)

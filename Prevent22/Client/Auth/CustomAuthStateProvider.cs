@@ -27,7 +27,7 @@ namespace Prevent22.Client
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
 			// Get JWT
-			string authToken = await _localStorageService.GetItemAsStringAsync("authToken");
+			string authToken = await _localStorageService.GetItemAsStringAsync(LocalStorageKey.Token);
 
 			var identity = new ClaimsIdentity();
 			_http.DefaultRequestHeaders.Authorization = null;
@@ -44,7 +44,7 @@ namespace Prevent22.Client
 				catch (Exception)
 				{
 					// Something went wrong, remove the token from local storage.
-					await _localStorageService.RemoveItemAsync("authToken");
+					await _localStorageService.RemoveItemAsync(LocalStorageKey.Token);
 					identity = new ClaimsIdentity();
 					Services.AuthService.IsLoggedIn = false;
 				}

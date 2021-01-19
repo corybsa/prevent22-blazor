@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Prevent22.Shared;
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace Prevent22.Client.Services
 		public async Task<DbResponse<User>> Check(int userId)
 		{
 			var result = await _http.PostAsJsonAsync("api/auth/check", userId);
-			
+
 			if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
 			{
 				IsLoggedIn = false;
@@ -39,6 +40,12 @@ namespace Prevent22.Client.Services
 				_nav.NavigateTo("/", forceLoad: true);
 			}
 
+			return await result.Content.ReadFromJsonAsync<DbResponse<User>>();
+		}
+
+		public async Task<DbResponse<User>> Register(UserRegister user)
+		{
+			var result = await _http.PostAsJsonAsync("api/auth/register", user);
 			return await result.Content.ReadFromJsonAsync<DbResponse<User>>();
 		}
 	}

@@ -10,5 +10,6 @@ namespace Prevent22.Client.Services
 	{
 		Task<AuthResponse<string>> Login(AuthInfo auth);
 		Task<DbResponse<User>> Check(int userId);
+		Task<DbResponse<User>> Register(UserRegister user);
 	}
 }
