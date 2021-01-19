@@ -1,15 +1,15 @@
 {
-  "name": "Prevent22",
-  "short_name": "Prevent22",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#03173d",
-  "icons": [
-    {
-      "src": "icon-512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ]
+    "name": "Prevent22",
+    "short_name": "Prevent22",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#ed3f39",
+    "icons": [
+        {
+            "src": "images/P22_Logo-Color_tp.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
 }

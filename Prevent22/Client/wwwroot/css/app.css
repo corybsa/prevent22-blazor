@@ -1,11 +1,21 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+@font-face {
+    font-family: 'Rajdhani';
+    src: url('../fonts/Rajdhani-Regular.ttf'), url('../fonts/Rajdhani-Bold.ttf')
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Rajdhani', sans-serif;
 }
 
 a, .btn-link {
     color: #0366d6;
+}
+
+a.p22-link {
+    color: #ed3f39 !important;
+    font-weight: bold;
 }
 
 .btn-primary {
