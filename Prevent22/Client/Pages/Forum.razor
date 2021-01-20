@@ -1,5 +1,6 @@
 ﻿@page "/forum"
 @inject IToastService ToastService
+@inject Services.IBoardService BoardService
 @using Prevent22.Shared
 
 <style>
@@ -13,25 +14,54 @@
 	}
 </style>
 
-<TelerikListView Data="@posts" Pageable="true">
-	<HeaderTemplate>
-		<h3>Forum</h3>
-	</HeaderTemplate>
-	<Template>
-		<div class="post" @onclick="@(() => showInfo(context))">
-			<p>@context.Title - @context.Author</p>
-		</div>
-	</Template>
-</TelerikListView>
+<div class="px-4 pb-4">
+	<div class="container">
+		<TelerikListView Data="@boards" Pageable="true">
+			<HeaderTemplate>
+				<h3>Forum</h3>
+			</HeaderTemplate>
+			<Template>
+				<div class="post" @onclick="@(() => showInfo(context))">
+					<div class="row">
+						<div class="col-6"></div>
+						<div class="col-2"></div>
+						<div class="col-2"></div>
+						<div class="col-2"></div>
+					</div>
+					<p>@context.BoardName</p>
+					<p>@context.BoardDescription</p>
+				</div>
+			</Template>
+		</TelerikListView>
+	</div>
+</div>
 
 @code {
-	private List<ForumPost> posts = new List<ForumPost> {
-		new ForumPost() { Title = "Test 1", Author = "tester" },
-		new ForumPost() { Title = "Test2", Author = "chester the tester" }
-	};
+	private List<Board> boards;
 
-	private void showInfo(ForumPost post)
+	protected override async Task OnInitializedAsync()
 	{
-		ToastService.ShowInfo(post.Title, post.Author);
+		try
+		{
+			var res = await BoardService.GetBoards();
+
+			if (res.Success)
+			{
+				boards = res.Data;
+			}
+			else
+			{
+				ToastService.ShowError(res.Info);
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message);
+		}
+	}
+
+	private void showInfo(Board board)
+	{
+		ToastService.ShowInfo(board.BoardDescription, board.BoardName);
 	}
 }

@@ -27,6 +27,7 @@ namespace Prevent22.Client
 			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 			builder.Services.AddScoped<IUserService, UserService>();
 			builder.Services.AddScoped<IAuthService, AuthService>();
+			builder.Services.AddScoped<IBoardService, BoardService>();
 			builder.Services.AddScoped<BrowserService>();
 			builder.Services.AddScoped<IFlyoutService, FlyoutService>();
 
