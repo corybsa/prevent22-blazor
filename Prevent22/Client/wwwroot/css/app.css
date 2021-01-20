@@ -7,6 +7,7 @@
 
 html, body {
     font-family: 'Rajdhani', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 a, .btn-link {
