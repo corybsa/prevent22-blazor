@@ -8,10 +8,10 @@
 @inject Microsoft.JSInterop.IJSRuntime js
 @using Prevent22.Shared
 
-<div class="main" style="background-image: url('images/flag-at-sunset-cropped.jpg'); background-size: 100%;">
+<div class="main" style="background-image: url('images/flag-at-sunset-cropped.jpg'); background-size: cover; background-position: center;">
 	<div class="container-fluid">
 		<div class="row align-items-center justify-content-center" style="height: @(windowHeight)px">
-			<div class="col-4">
+			<div class="col-12 col-sm-8 col-lg-6">
 				<div class="card">
 					<div class="card-body">
 						<EditForm Model="@user" OnValidSubmit="HandleLogin">
@@ -26,9 +26,9 @@
 								<InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />
 								<ValidationMessage For="@(() => user.Password)" />
 							</div>
-							<button type="submit" class="btn btn-primary">Login</button>
+							<button type="submit" class="btn btn-danger">Login</button>
 						</EditForm>
-						<p>Or <a href="/register">create an account</a>.</p>
+						<p>New around here? <a href="/register" class="p22-link">Create an account</a>.</p>
 					</div>
 				</div>
 			</div>

@@ -51,14 +51,22 @@ namespace Prevent22.Server.Controllers
 				return BadRequest(response);
 			}
 
-			var parameters = new DynamicParameters();
-			parameters.Add("StatementType", StatementType.Get);
-			parameters.Add("Username", auth.Username);
-
 			try
 			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Get);
+				parameters.Add("Username", auth.Username);
+
 				// get user info from database
 				var user = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data.First();
+
+				if (!CheckHash(user.Hash, auth.Password))
+				{
+					response.Success = false;
+					response.Message = "Username or password is incorrect.";
+					return BadRequest(response);
+				}
+
 				response.Data = user.UserId.ToString();
 				response.Message = CreateToken(user);
 
@@ -85,7 +93,9 @@ namespace Prevent22.Server.Controllers
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", 1);
 				parameters.Add("UserID", userId);
+
 				var user = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data;
+
 				response.Success = true;
 				response.Data = user;
 				Client.Services.UserService.user = user.First();
@@ -127,6 +137,7 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("StatementType", StatementType.Create);
 				parameters.Add("Username", user.Username);
 				parameters.Add("Hash", hash);
+
 				var res = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data.First();
 
 				response.Data = res.UserId.ToString();

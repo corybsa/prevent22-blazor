@@ -8,8 +8,8 @@ namespace Prevent22.Client.Auth
 {
 	public static class Policies
 	{
-		public const string IsGlobalAdmin = "IsGlobalAdmin";
 		public const string IsAdmin = "IsAdmin";
-		public const string IsTeacher = "IsTeacher";
+		public const string IsModerator = "IsModerator";
+		public const string IsUser = "IsUser";
 	}
 }

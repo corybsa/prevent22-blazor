@@ -1,9 +1,19 @@
 ﻿@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 @using Prevent22.Shared
+@using Auth
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-	<a class="navbar-brand" href="#">
+	<div style="
+		position: absolute;
+		top: 0;
+		left: 0;
+		background: hsla(0, 0%, 100%, 0.4);
+		z-index: 1;
+		height: 76px;
+		width: 81px;"></div>
+	<a class="navbar-brand" href="#" style="z-index: 2">
 		<img src="./images/P22Veterans_Logo-Color.png" alt="Prevent 22 Veterans" class="nav-logo">
 	</a>
 	<button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" @onclick="ToggleNavMenu">
@@ -16,13 +26,13 @@
 				<NavLink class="nav-link" href="" Match="NavLinkMatch.All">Home</NavLink>
 			</li>
 			<li class="nav-item">
-				<NavLink class="nav-link" href="https://www.bootandheel.com/category/prevent-22" target="_blank" rel="noreferrer">Gear &amp; Apparel</NavLink>
-			</li>
-			<li class="nav-item">
-				<NavLink class="nav-link" href="/events">Events</NavLink>
+				<NavLink class="nav-link" href="/about-us">About Us</NavLink>
 			</li>
 			<li class="nav-item">
 				<NavLink class="nav-link" href="/forum">Forum</NavLink>
+			</li>
+			<li class="nav-item">
+				<NavLink class="nav-link" href="/events">Events</NavLink>
 			</li>
 			<li class="nav-item dropdown @ResourcesDropDownClass">
 				<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showResourcesDropDown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
@@ -30,13 +40,25 @@
 				</a>
 				<div class="dropdown-menu @ResourcesDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
 					<a class="dropdown-item" href="/resources/jobs">Job Opportunities</a>
-					<a class="dropdown-item" href="#">Resume Templates</a>
-					<a class="dropdown-item" href="#">Mental Health Clinics</a>
+					<a class="dropdown-item disabled" href="#">Resume Templates</a>
+					<a class="dropdown-item disabled" href="#">Mental Health Clinics</a>
 				</div>
 			</li>
 			<li class="nav-item">
-				<NavLink class="nav-link" href="/about-us">About Us</NavLink>
+				<NavLink class="nav-link" href="https://www.bootandheel.com/category/prevent-22" target="_blank" rel="noreferrer">Gear &amp; Apparel</NavLink>
 			</li>
+			<AuthorizeView Policy="@Policies.IsAdmin">
+				<Authorized>
+					<li class="nav-item dropdown @AdminDropDownClass">
+						<a id="adminDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showAdminDropDown" @onclick="(() => showAdminDropDown = !showAdminDropDown)">
+							Admin
+						</a>
+						<div class="dropdown-menu @AdminDropDownClass" aria-labelledby="adminDropdown" @onclick="(() => showAdminDropDown = !showAdminDropDown)">
+							<a class="dropdown-item disabled" href="#">Manage users</a>
+						</div>
+					</li>
+				</Authorized>
+			</AuthorizeView>
 			<AuthorizeView>
 				<Authorized>
 					<li class="nav-item">
@@ -51,15 +73,15 @@
 			</AuthorizeView>
 		</ul>
 		@*<div class="dropdown @SearchDropDownClass">
-			<button class="btn btn-secondary dropdown-toggle" aria-expanded="@showSearchDropDown" @onclick="(() => showSearchDropDown = !showSearchDropDown)">
-				<div class="dropdown-menu dropdown-menu-right @SearchDropDownClass" aria-labelledby="resourcesDropdown" style="width: 290px;">
-					<form class="form-inline my-2 my-lg-0" style="margin-left: 10px; margin-right: 10px;">
-						<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-					</form>
-				</div>
-			</button>
-		</div>*@
+				<button class="btn btn-secondary dropdown-toggle" aria-expanded="@showSearchDropDown" @onclick="(() => showSearchDropDown = !showSearchDropDown)">
+					<div class="dropdown-menu dropdown-menu-right @SearchDropDownClass" aria-labelledby="resourcesDropdown" style="width: 290px;">
+						<form class="form-inline my-2 my-lg-0" style="margin-left: 10px; margin-right: 10px;">
+							<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+							<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+						</form>
+					</div>
+				</button>
+			</div>*@
 	</div>
 </nav>
 
@@ -67,10 +89,12 @@
 	private bool collapseNavMenu = true;
 	private bool showResourcesDropDown = false;
 	private bool showSearchDropDown = false;
+	private bool showAdminDropDown = false;
 
 	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 	private string ResourcesDropDownClass => showResourcesDropDown ? "show" : null;
 	private string SearchDropDownClass => showSearchDropDown ? "show" : null;
+	private string AdminDropDownClass => showAdminDropDown ? "show" : null;
 
 	private void ToggleNavMenu()
 	{
@@ -83,5 +107,6 @@
 		await LocalStorage.RemoveItemAsync(LocalStorageKey.UserId);
 		await LocalStorage.RemoveItemAsync(LocalStorageKey.Token);
 		await AuthStateProvider.GetAuthenticationStateAsync();
+		NavigationManager.NavigateTo("", forceLoad: true);
 	}
 }
