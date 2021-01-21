@@ -3,6 +3,7 @@
 @inject Services.IBoardService BoardService
 @inject Services.IFlyoutService Flyout
 @using Prevent22.Shared
+@using Auth
 
 <style>
 	div.board:hover {
@@ -17,7 +18,7 @@
 
 <div class="px-4 p-4">
 	<div class="container">
-		<AuthorizeView>
+		<AuthorizeView Policy="@Policies.IsAdmin">
 			<TelerikButton Class="mb-3" @onclick="CreateBoard">Create new board</TelerikButton>
 		</AuthorizeView>
 		<TelerikListView Data="@boards" Pageable="true">
