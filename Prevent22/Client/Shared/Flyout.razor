@@ -11,7 +11,11 @@
 <div style="height: calc(100% - 53px); padding: 10px; overflow: auto;">
 	@if (Service.Content != null)
 	{
-		@renderFragment(Service.Content, Service.Data)
+		<div class="card">
+			<div class="card-body">
+				@renderFragment(Service.Content, Service.Data)
+			</div>
+		</div>
 	}
 </div>
 

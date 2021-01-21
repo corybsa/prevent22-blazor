@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Prevent22.Server.Data;
 using Prevent22.Shared;
@@ -19,6 +20,7 @@ namespace Prevent22.Server.Controllers
 			_helper = new Helper(sql);
 		}
 
+		[AllowAnonymous]
 		[HttpGet]
 		public async Task<IActionResult> GetBoards()
 		{
@@ -38,6 +40,7 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[AllowAnonymous]
 		[HttpGet("{boardId}")]
 		public async Task<IActionResult> GetBoard(int boardId)
 		{

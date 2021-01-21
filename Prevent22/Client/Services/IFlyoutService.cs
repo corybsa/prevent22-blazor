@@ -10,6 +10,7 @@ namespace Prevent22.Client.Services
 	public interface IFlyoutService
 	{
 		public event Action OnChange;
+		public Action OnSuccess { get; set; }
 		public bool IsOpen { get; set; }
 		public string Title { get; set; }
 		public Type Content { get; set; }

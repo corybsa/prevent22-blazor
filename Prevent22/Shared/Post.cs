@@ -13,7 +13,9 @@ namespace Prevent22.Shared
 		public int CreatedBy { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public int ThreadId { get; set; }
-		public string CreatedByName { get; set; }
 		public string ThreadName { get; set; }
+		public string Author { get; set; }
+		public int AuthorRole { get; set; }
+		public string RoleName { get; set; }
 	}
 }

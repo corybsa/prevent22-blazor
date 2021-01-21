@@ -1,0 +1,60 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IBoardService BoardService
+
+<style>
+	.k-textarea {
+		width: 100%;
+		display: block;
+	}
+</style>
+
+<EditForm Model="@board" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="boardName">Name</label>
+				<TelerikTextBox Id="boardName" @bind-Value="board.BoardName" Width="100%" />
+				<ValidationMessage For="@(() => board.BoardName)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="description">Description</label>
+				<TelerikTextArea Id="description" @bind-Value="board.BoardDescription" AutoSize="true" />
+				<ValidationMessage For="@(() => board.BoardDescription)" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+	Board board = new Board();
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await BoardService.CreateBoard(board);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

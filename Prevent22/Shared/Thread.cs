@@ -13,7 +13,8 @@ namespace Prevent22.Shared
 		public string ThreadName { get; set; }
 		public int CreatedBy { get; set; }
 		public DateTime CreatedDate { get; set; }
-		public DateTime LastPostDate { get; set; }
-		public string CreatedByName { get; set; }
+		public DateTime? LastPostDate { get; set; }
+		public string Author { get; set; }
+		public int PostCount { get; set; }
 	}
 }

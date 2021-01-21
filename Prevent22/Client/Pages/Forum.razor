@@ -1,35 +1,62 @@
 ﻿@page "/forum"
 @inject IToastService ToastService
 @inject Services.IBoardService BoardService
+@inject Services.IFlyoutService Flyout
 @using Prevent22.Shared
 
 <style>
-	div.post:hover {
+	div.board:hover {
 		cursor: pointer;
 		background: lightgrey;
 	}
 
-	div.post > p {
-		margin: 0;
+	div.board:nth-child(2n) {
+		background: hsl(0, 0%, 95%);
 	}
 </style>
 
-<div class="px-4 pb-4">
+<div class="px-4 p-4">
 	<div class="container">
+		<AuthorizeView>
+			<TelerikButton Class="mb-3" @onclick="CreateBoard">Create new board</TelerikButton>
+		</AuthorizeView>
 		<TelerikListView Data="@boards" Pageable="true">
 			<HeaderTemplate>
-				<h3>Forum</h3>
+				<div class="container" style="background: hsl(210, 17%, 98%);">
+					<div class="row">
+						<div class="col-6">
+							<h6>Board</h6>
+						</div>
+						<div class="col-2 text-center d-none d-sm-block">
+							<h6>Threads</h6>
+						</div>
+						<div class="col-2 text-center d-none d-md-block">
+							<h6>Posts</h6>
+						</div>
+						<div class="col-6 col-sm-4 col-md-2 text-center">
+							<h6>Last Post</h6>
+						</div>
+					</div>
+				</div>
 			</HeaderTemplate>
 			<Template>
-				<div class="post" @onclick="@(() => showInfo(context))">
-					<div class="row">
-						<div class="col-6"></div>
-						<div class="col-2"></div>
-						<div class="col-2"></div>
-						<div class="col-2"></div>
+				<div class="container board" @onclick="@(() => showInfo(context))">
+					<div class="row pt-2 pb-2">
+						<div class="col-6">
+							<p class="m-0">@context.BoardName</p>
+							<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
+						</div>
+						<div class="col-2 text-center d-none d-sm-block">
+							<p class="m-0">@context.ThreadCount</p>
+						</div>
+						<div class="col-2 text-center d-none d-md-block">
+							<p class="m-0">@context.PostCount</p>
+						</div>
+						<div class="col-6 col-sm-4 col-md-2 text-center">
+							<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
+							<p class="m-0" style="font-size: 0.9rem;">by @(context.LastPostAuthor ?? "nobody")</p>
+						</div>
 					</div>
-					<p>@context.BoardName</p>
-					<p>@context.BoardDescription</p>
 				</div>
 			</Template>
 		</TelerikListView>
@@ -40,6 +67,11 @@
 	private List<Board> boards;
 
 	protected override async Task OnInitializedAsync()
+	{
+		await GetData();
+	}
+
+	private async Task GetData()
 	{
 		try
 		{
@@ -63,5 +95,15 @@
 	private void showInfo(Board board)
 	{
 		ToastService.ShowInfo(board.BoardDescription, board.BoardName);
+	}
+
+	private void CreateBoard()
+	{
+		Flyout.Open("Create new board", typeof(Client.Flyout.Boards.BoardsAdd));
+		Flyout.OnSuccess = async () =>
+		{
+			await GetData();
+			StateHasChanged();
+		};
 	}
 }

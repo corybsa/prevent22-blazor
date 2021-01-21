@@ -14,5 +14,7 @@ namespace Prevent22.Shared
 		public string BoardDescription { get; set; }
 		public int ThreadCount { get; set; }
 		public int PostCount { get; set; }
+		public DateTime? LastPostDate { get; set; }
+		public string LastPostAuthor { get; set; }
 	}
 }
