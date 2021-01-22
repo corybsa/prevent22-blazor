@@ -7,12 +7,13 @@ namespace Prevent22.Shared
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 	public class PasswordAttribute : ValidationAttribute
 	{
-		private string Pattern;
+		private readonly string Pattern;
 
 		public PasswordAttribute(string pattern) {
 			Pattern = pattern;
 		}
 		
+		#nullable enable
 		public override bool IsValid(object? value)
 		{
 			string password;

@@ -17,12 +17,19 @@ namespace Prevent22.Client.Services
 			_http = http;
 		}
 
-		public async Task<DbResponse<Board>> GetBoards() {
+		public async Task<DbResponse<Board>> GetBoards()
+		{
 			return await _http.GetFromJsonAsync<DbResponse<Board>>("api/boards");
 		}
 
-		public async Task<DbResponse<Board>> GetBoard(int boardId) {
+		public async Task<DbResponse<Board>> GetBoard(int boardId)
+		{
 			return await _http.GetFromJsonAsync<DbResponse<Board>>($"api/boards/{boardId}");
+		}
+
+		public async Task<DbResponse<Thread>> GetBoardThreads(int boardId)
+		{
+			return await _http.GetFromJsonAsync<DbResponse<Thread>>($"api/boards/{boardId}/threads");
 		}
 
 		public async Task<DbResponse<Board>> CreateBoard(Board board)
@@ -39,7 +46,7 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<Board>> DeleteBoard(int boardId)
 		{
-			var result = await _http.DeleteAsync($"api/boards{boardId}");
+			var result = await _http.DeleteAsync($"api/boards/{boardId}");
 			return await result.Content.ReadFromJsonAsync<DbResponse<Board>>();
 		}
 	}

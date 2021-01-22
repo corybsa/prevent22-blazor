@@ -1,19 +1,20 @@
-﻿@page "/forum"
+﻿@page "/forum/{boardId:int}"
 @implements IDisposable
-@inject IToastService ToastService
+@inject Services.IThreadService ThreadService
 @inject Services.IBoardService BoardService
+@inject IToastService ToastService
 @inject Services.IFlyoutService Flyout
 @inject NavigationManager NavigationManager
-@using Prevent22.Shared
 @using Auth
+@using Prevent22.Shared
 
 <style>
-	div.board:hover {
+	div.thread:hover {
 		cursor: pointer;
 		background: lightgrey;
 	}
 
-	div.board:nth-child(2n) {
+	div.thread:nth-child(2n) {
 		background: hsl(0, 0%, 95%);
 	}
 </style>
@@ -21,44 +22,38 @@
 <div class="px-4 p-4">
 	<div class="container">
 		<AuthorizeView Policy="@Policies.IsAdmin">
-			<TelerikButton Class="mb-3" @onclick="CreateBoard">Create new board</TelerikButton>
+			<TelerikButton Class="mb-3" @onclick="CreateThread">Create new thread</TelerikButton>
 		</AuthorizeView>
-		<TelerikListView Data="@boards" Pageable="true">
+		<TelerikListView Data="@threads" Pageable="true">
 			<HeaderTemplate>
 				<div class="container" style="background: hsl(210, 17%, 98%);">
 					<div class="row">
 						<div class="col-6">
-							<h6 class="mt-1 mb-1">Board</h6>
+							<h6 class="mt-1 mb-1">Thread</h6>
 						</div>
 						<div class="col-2 text-center d-none d-sm-block">
-							<h6 class="mt-1 mb-1">Threads</h6>
-						</div>
-						<div class="col-2 text-center d-none d-md-block">
 							<h6 class="mt-1 mb-1">Posts</h6>
 						</div>
-						<div class="col-6 col-sm-4 col-md-2 text-center">
+						<div class="col-6 col-sm-4 text-center">
 							<h6 class="mt-1 mb-1">Last Post</h6>
 						</div>
 					</div>
 				</div>
 			</HeaderTemplate>
 			<Template>
-				<div class="container board" @onclick="@(() => GoToThreads(context.BoardId))">
+				<div class="container thread" @onclick="@(() => GoToPosts(context.ThreadId))">
 					<div class="row pt-2 pb-2">
 						<div class="col-6">
-							<p class="m-0">@context.BoardName</p>
-							<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
-						</div>
-						<div class="col-2 text-center d-none d-sm-block">
-							<p class="m-0">@context.ThreadCount</p>
+							<p class="m-0">@context.ThreadName</p>
+							<p class="m-0" style="font-size: 0.9rem;">@context.ThreadName</p>
 						</div>
 						<div class="col-2 text-center d-none d-md-block">
 							<p class="m-0">@context.PostCount</p>
 						</div>
-						<div class="col-6 col-sm-4 col-md-2 text-center">
+						<div class="col-6 col-sm-4 text-center">
 							<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
 
-							@if (context.LastPostDate != null)
+							@if (context.LastPostDate != null && !string.IsNullOrEmpty(context.LastPostAuthor))
 							{
 								<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
 							}
@@ -71,7 +66,10 @@
 </div>
 
 @code {
-	private List<Board> boards;
+	[Parameter]
+	public int boardId { get; set; }
+
+	private List<Thread> threads;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -82,11 +80,11 @@
 	{
 		try
 		{
-			var res = await BoardService.GetBoards();
+			var res = await BoardService.GetBoardThreads(boardId);
 
 			if (res.Success)
 			{
-				boards = res.Data;
+				threads = res.Data;
 			}
 			else
 			{
@@ -99,14 +97,14 @@
 		}
 	}
 
-	private void GoToThreads(int? boardId)
+	private void GoToPosts(int? threadId)
 	{
-		NavigationManager.NavigateTo($"/forum/{boardId}");
+		NavigationManager.NavigateTo($"/forum/{boardId}/thread/{threadId}/posts");
 	}
 
-	private void CreateBoard()
+	private void CreateThread()
 	{
-		Flyout.Open("Create new board", typeof(Client.Flyout.Boards.BoardsAdd));
+		Flyout.Open<int>("Create new thread", typeof(Client.Flyout.Threads.ThreadsAdd), boardId);
 		Flyout.OnSuccess = async () =>
 		{
 			await GetData();
@@ -116,6 +114,6 @@
 
 	public void Dispose()
 	{
-		Flyout.OnSuccess = null;
+
 	}
 }

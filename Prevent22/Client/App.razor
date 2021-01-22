@@ -38,6 +38,7 @@
 				}
 				else
 				{
+					Services.UserService.user = res.Data.First();
 					Services.AuthService.IsLoggedIn = true;
 				}
 			}

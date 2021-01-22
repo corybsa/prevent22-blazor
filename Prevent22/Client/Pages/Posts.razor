@@ -1,0 +1,125 @@
+﻿@page "/forum/{boardId:int}/thread/{threadId:int}/posts"
+@implements IDisposable
+@inject Services.IThreadService ThreadService
+@inject Services.IBoardService BoardService
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject NavigationManager NavigationManager
+@using Auth
+@using Prevent22.Shared
+
+<style>
+	.post-header {
+		background: hsl(0, 0%, 95%);
+	}
+</style>
+
+<div class="px-4 p-4">
+	<div class="container">
+		<AuthorizeView Policy="@Policies.IsAdmin">
+			<TelerikButton Class="mb-3" @onclick="CreatePost">Create new thread</TelerikButton>
+		</AuthorizeView>
+		<TelerikListView Data="@posts" Pageable="true">
+			<HeaderTemplate>
+				<div class="container" style="background: hsl(210, 17%, 98%);">
+					<div class="row">
+						<div class="col-2 text-center">
+							<h6 class="mt-1 mb-1">Author</h6>
+						</div>
+						<div class="col-10">
+							<h6 class="mt-1 mb-1">Posts</h6>
+						</div>
+					</div>
+				</div>
+			</HeaderTemplate>
+			<Template>
+				<div class="container post">
+					<div class="row post-header">
+						<div class="col-12" style="font-size: 0.8rem;">@context.CreatedDate.Value.ToString("MMMM dd, yyyy a\\t hh:mm tt")</div>
+					</div>
+					<div class="row pt-2 pb-2">
+						<div class="col-2">
+							<p class="m-0 text-center">@context.Author</p>
+							<p class="m-0 text-center" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
+						</div>
+						<div class="col-10">
+							<p class="m-0">@context.Message</p>
+						</div>
+					</div>
+				</div>
+			</Template>
+		</TelerikListView>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public int boardId { get; set; }
+
+	[Parameter]
+	public int threadId { get; set; }
+
+	private Thread thread;
+	private List<Post> posts;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetData();
+	}
+
+	private async Task GetData()
+	{
+		await GetThread();
+		await GetPosts();
+	}
+
+	private async Task GetPosts()
+	{
+		try
+		{
+			var postResults = await ThreadService.GetThreadPosts(threadId);
+
+			if (postResults.Success)
+			{
+				posts = postResults.Data;
+			}
+			else
+			{
+				ToastService.ShowError(postResults.Info);
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message);
+		}
+	}
+
+	private async Task GetThread()
+	{
+		try
+		{
+			var res = await ThreadService.GetThread(threadId);
+
+			if (res.Success)
+			{
+				thread = res.Data.First();
+			}
+			else
+			{
+				ToastService.ShowError(res.Info);
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message);
+		}
+	}
+
+	private void CreatePost() {
+
+	}
+
+	public void Dispose() {
+
+	}
+}

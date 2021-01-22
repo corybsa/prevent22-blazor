@@ -1,73 +1,28 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Prevent22.Server.Data;
 using Prevent22.Shared;
+using System;
+using System.Threading.Tasks;
 
 namespace Prevent22.Server.Controllers
 {
 	[Auth]
 	[Route("api/[controller]")]
 	[ApiController]
-	public class BoardsController : ControllerBase
+	public class ThreadsController : ControllerBase
 	{
 		private readonly Helper _helper;
 
-		public BoardsController(SqlConfiguration sql)
+		public ThreadsController(SqlConfiguration sql)
 		{
 			_helper = new Helper(sql);
 		}
 
 		[AllowAnonymous]
 		[HttpGet]
-		public async Task<IActionResult> GetBoards()
-		{
-			var response = new DbResponse<Board>();
-
-			try
-			{
-				var parameters = new DynamicParameters();
-				parameters.Add("StatementType", StatementType.Get);
-				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
-			}
-			catch (Exception e)
-			{
-				response.Success = false;
-				response.Info = e.Message;
-				return BadRequest(response);
-			}
-
-			return Ok(response);
-		}
-
-		[AllowAnonymous]
-		[HttpGet("{boardId}")]
-		public async Task<IActionResult> GetBoard(int boardId)
-		{
-			var response = new DbResponse<Board>();
-
-			try
-			{
-				var parameters = new DynamicParameters();
-				parameters.Add("StatementType", StatementType.Get);
-				parameters.Add("BoardId", boardId);
-				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
-			}
-			catch (Exception e)
-			{
-				response.Success = false;
-				response.Info = e.Message;
-				return BadRequest(response);
-			}
-
-			return Ok(response);
-		}
-
-		[AllowAnonymous]
-		[HttpGet("{boardId}/threads")]
-		public async Task<IActionResult> GetThread(int boardId)
+		public async Task<IActionResult> GetThreads()
 		{
 			var response = new DbResponse<Thread>();
 
@@ -75,7 +30,6 @@ namespace Prevent22.Server.Controllers
 			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Get);
-				parameters.Add("BoardId", boardId);
 				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
 			}
 			catch (Exception e)
@@ -88,19 +42,65 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
-		[Auth(Roles = new[] { SystemRole.Admin })]
-		[HttpPost]
-		public async Task<IActionResult> CreateBoard(Board board)
+		[AllowAnonymous]
+		[HttpGet("{threadId}")]
+		public async Task<IActionResult> GetThread(int threadId)
 		{
-			var response = new DbResponse<Board>();
+			var response = new DbResponse<Thread>();
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Get);
+				parameters.Add("ThreadId", threadId);
+				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
+			}
+			catch (Exception e)
+			{
+				response.Success = false;
+				response.Info = e.Message;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
+		[AllowAnonymous]
+		[HttpGet("{threadId}/posts")]
+		public async Task<IActionResult> GetThreadPosts(int threadId)
+		{
+			var response = new DbResponse<Post>();
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Get);
+				parameters.Add("ThreadId", threadId);
+				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
+			}
+			catch (Exception e)
+			{
+				response.Success = false;
+				response.Info = e.Message;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> CreateThread(Thread thread)
+		{
+			var response = new DbResponse<Thread>();
 
 			try
 			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Create);
-				parameters.Add("BoardName", board.BoardName);
-				parameters.Add("BoardDescription", board.BoardDescription);
-				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
+				parameters.Add("BoardId", thread.BoardId);
+				parameters.Add("ThreadName", thread.ThreadName);
+				parameters.Add("CreatedBy", thread.CreatedBy);
+				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
 			}
 			catch (Exception e)
 			{
@@ -112,20 +112,22 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
-		[Auth(Roles = new[] { SystemRole.Admin })]
 		[HttpPut]
-		public async Task<IActionResult> UpdateBoard(Board board)
+		public async Task<IActionResult> UpdateThread(Thread thread)
 		{
-			var response = new DbResponse<Board>();
+			var response = new DbResponse<Thread>();
 
 			try
 			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Update);
-				parameters.Add("BoardId", board.BoardId);
-				parameters.Add("BoardName", board.BoardName);
-				parameters.Add("BoardDescription", board.BoardDescription);
-				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
+				parameters.Add("ThreadId", thread.ThreadId);
+				parameters.Add("BoardId", thread.BoardId);
+				parameters.Add("ThreadName", thread.ThreadName);
+				parameters.Add("CreatedBy", thread.CreatedBy);
+				parameters.Add("CreatedDate", thread.CreatedDate);
+				parameters.Add("LastPostDate", thread.LastPostDate);
+				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
 			}
 			catch (Exception e)
 			{
@@ -137,18 +139,18 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
-		[Auth(Roles = new[] { SystemRole.Admin })]
-		[HttpDelete("{boardId}")]
-		public async Task<IActionResult> DeleteBoard(int boardId)
+		[Auth(Roles = new[] { SystemRole.Admin, SystemRole.Moderator })]
+		[HttpDelete("{threadId}")]
+		public async Task<IActionResult> DeleteThread(int threadId)
 		{
-			var response = new DbResponse<Board>();
+			var response = new DbResponse<Thread>();
 
 			try
 			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Delete);
-				parameters.Add("BoardId", boardId);
-				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
+				parameters.Add("ThreadId", threadId);
+				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
 			}
 			catch (Exception e)
 			{

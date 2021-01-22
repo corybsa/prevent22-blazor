@@ -1,0 +1,134 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IThreadService ThreadService
+@inject Services.IPostService PostService
+@using System.ComponentModel.DataAnnotations;
+
+<style>
+	.k-textarea {
+		width: 100%;
+		display: block;
+	}
+</style>
+
+<EditForm Model="@tap" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="threadName">Title</label>
+				<TelerikTextBox Id="threadName" @bind-Value="tap.ThreadName" Width="100%" />
+				<ValidationMessage For="@(() => tap.ThreadName)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<TelerikEditor @bind-Value="tap.Message" Width="100%" Height="400px"></TelerikEditor>
+				<ValidationMessage For="@(() => tap.Message)" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public int Data { get; set; }
+
+	class ThreadAndPost
+	{
+		public int BoardId { get; set; }
+		[Required(ErrorMessage = "A name must be provided.")]
+		public string ThreadName { get; set; }
+		public int CreatedBy { get; set; }
+		[Required(ErrorMessage = "A message is required to submit a post.")]
+		public string Message { get; set; }
+	}
+
+	private ThreadAndPost tap = new ThreadAndPost();
+
+	private async Task Submit()
+	{
+		Console.WriteLine(Services.UserService.user.UserId);
+		try
+		{
+			// create new thread
+			var thread = new Thread();
+			thread.ThreadName = tap.ThreadName;
+			thread.CreatedBy = Services.UserService.user.UserId;
+			thread.BoardId = Data;
+
+			var res = await ThreadService.CreateThread(thread);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				await CreatePost(res.Data.First());
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	private async Task CreatePost(Thread thread)
+	{
+		try
+		{
+			var post = new Post();
+			post.ThreadId = thread.ThreadId;
+			post.Message = tap.Message;
+			post.CreatedBy = Services.UserService.user.UserId;
+
+			var res = await PostService.CreatePost(post);
+
+			if (!res.Success)
+			{
+				await DeleteThread(thread);
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			await DeleteThread(thread);
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	private async Task DeleteThread(Thread thread)
+	{
+		if (thread.ThreadId.HasValue)
+		{
+			try
+			{
+				var res = await ThreadService.DeleteThread(thread.ThreadId);
+
+				if (!res.Success)
+				{
+					ToastService.ShowError(res.Info, "Error");
+				}
+				else
+				{
+					Flyout.OnSuccess?.Invoke();
+					Flyout.Close();
+				}
+			}
+			catch (Exception e)
+			{
+				ToastService.ShowError(e.Message, "Error");
+			}
+		}
+	}
+}

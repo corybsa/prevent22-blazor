@@ -160,6 +160,10 @@ a.p22-link > svg {
     padding-bottom: .3125rem;
 }
 
+.blazored-toast-container {
+    z-index: 999;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;

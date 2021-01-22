@@ -98,7 +98,6 @@ namespace Prevent22.Server.Controllers
 
 				response.Success = true;
 				response.Data = user;
-				Client.Services.UserService.user = user.First();
 			}
 			catch (Exception e)
 			{

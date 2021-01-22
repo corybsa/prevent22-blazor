@@ -28,6 +28,8 @@ namespace Prevent22.Client
 			builder.Services.AddScoped<IUserService, UserService>();
 			builder.Services.AddScoped<IAuthService, AuthService>();
 			builder.Services.AddScoped<IBoardService, BoardService>();
+			builder.Services.AddScoped<IThreadService, ThreadService>();
+			builder.Services.AddScoped<IPostService, PostService>();
 			builder.Services.AddScoped<BrowserService>();
 			builder.Services.AddScoped<IFlyoutService, FlyoutService>();
 

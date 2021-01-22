@@ -10,6 +10,7 @@ namespace Prevent22.Client.Services
 	{
 		Task<DbResponse<Board>> GetBoards();
 		Task<DbResponse<Board>> GetBoard(int boardId);
+		Task<DbResponse<Thread>> GetBoardThreads(int boardId);
 		Task<DbResponse<Board>> CreateBoard(Board board);
 		Task<DbResponse<Board>> UpdateBoard(Board board);
 		Task<DbResponse<Board>> DeleteBoard(int boardId);
