@@ -69,9 +69,6 @@ namespace Prevent22.Server.Controllers
 
 				response.Data = user.UserId.ToString();
 				response.Message = CreateToken(user);
-
-				// save user info on client
-				Client.Services.UserService.user = user;
 			}
 			catch (Exception e)
 			{
@@ -141,9 +138,6 @@ namespace Prevent22.Server.Controllers
 
 				response.Data = res.UserId.ToString();
 				response.Message = CreateToken(res);
-
-				// save user info on client
-				Client.Services.UserService.user = res;
 			}
 			catch (Exception e)
 			{

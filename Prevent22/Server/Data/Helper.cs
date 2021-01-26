@@ -56,13 +56,14 @@ namespace Prevent22.Server
 					response.Success = false;
 					response.Info = exec;
 					
-					// print exec
-					Console.WriteLine(exec);
+					throw new Exception(e.Message);
 				}
 				catch (Exception e)
 				{
 					response.Success = false;
 					response.Info = $"Unknown error: {e.Message}";
+
+					throw new Exception(response.Info);
 				}
 				finally
 				{
