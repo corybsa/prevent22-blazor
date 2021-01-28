@@ -1,0 +1,47 @@
+﻿@using Prevent22.Shared;
+
+<EditForm Model="Data" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="threadName">Role</label>
+				@* need a dropdown *@
+				@*<ValidationMessage For="@(() => tap.ThreadName)" />*@
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-p22">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public User Data { get; set; }
+
+	private async Task Submit()
+	{
+		@*try
+		{
+			// create new thread
+			var thread = new Thread();
+			thread.ThreadName = tap.ThreadName;
+			thread.CreatedBy = Services.UserService.user.UserId;
+			thread.BoardId = Data;
+
+			var res = await ThreadService.CreateThread(thread);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				await CreatePost(res.Data.First());
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}*@
+	}
+}
