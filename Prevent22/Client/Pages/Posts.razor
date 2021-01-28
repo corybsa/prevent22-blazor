@@ -1,6 +1,7 @@
 ﻿@page "/forum/{boardId:int}/thread/{threadId:int}/posts"
 @implements IDisposable
 @inject Services.IThreadService ThreadService
+@inject Services.IPostService PostService
 @inject Services.IBoardService BoardService
 @inject IToastService ToastService
 @inject Services.IFlyoutService Flyout
@@ -12,18 +13,33 @@
 	.post-header {
 		background: hsl(0, 0%, 95%);
 	}
+
+	.post-author {
+	}
+
+	.post-content > p > p:last-child {
+		margin: 0;
+	}
+
+	@@media (max-width: 576px) {
+		.post-author p:last-child {
+			border-bottom: 1px solid hsl(0, 0%, 83%);
+		}
+	}
 </style>
 
 <div class="px-4 p-4">
 	<div class="container">
-		<AuthorizeView Policy="@Policies.IsAdmin">
-			<TelerikButton Class="mb-3" @onclick="CreatePost">Create new thread</TelerikButton>
-		</AuthorizeView>
+		@if (thread != null)
+		{
+			<h3>@thread.ThreadName</h3>
+		}
+
 		<TelerikListView Data="@posts" Pageable="true">
 			<HeaderTemplate>
 				<div class="container" style="background: hsl(210, 17%, 98%);">
 					<div class="row">
-						<div class="col-2 text-center">
+						<div class="col-2">
 							<h6 class="mt-1 mb-1">Author</h6>
 						</div>
 						<div class="col-10">
@@ -38,17 +54,32 @@
 						<div class="col-12" style="font-size: 0.8rem;">@context.CreatedDate.Value.ToString("MMMM dd, yyyy a\\t hh:mm tt")</div>
 					</div>
 					<div class="row pt-2 pb-2">
-						<div class="col-2">
-							<p class="m-0 text-center">@context.Author</p>
-							<p class="m-0 text-center" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
+						<div class="col-12 col-sm-2 post-author">
+							<p class="m-0">@context.Author</p>
+							<p class="m-0" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
 						</div>
-						<div class="col-10">
-							<p class="m-0">@context.Message</p>
+						<div class="col-12 col-sm-10 post-content">
+							<p class="m-0">@((MarkupString)(context.Message))</p>
 						</div>
 					</div>
 				</div>
 			</Template>
 		</TelerikListView>
+
+		<AuthorizeView>
+			<h5 style="margin-top: 10px;">Reply to this thread</h5>
+			<EditForm Model="@newPost" OnValidSubmit="CreatePost" Context="formContext">
+				<div class="row">
+					<div class="col-12">
+						<div class="mb-2">
+							<TelerikEditor @bind-Value="newPost.Message" Width="100%" Height="400px"></TelerikEditor>
+							<ValidationMessage For="@(() => newPost.Message)" />
+						</div>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-p22">Submit</button>
+			</EditForm>
+		</AuthorizeView>
 	</div>
 </div>
 
@@ -61,6 +92,7 @@
 
 	private Thread thread;
 	private List<Post> posts;
+	private Post newPost = new Post();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -77,15 +109,15 @@
 	{
 		try
 		{
-			var postResults = await ThreadService.GetThreadPosts(threadId);
+			var res = await ThreadService.GetThreadPosts(threadId);
 
-			if (postResults.Success)
+			if (res.Success)
 			{
-				posts = postResults.Data;
+				posts = res.Data;
 			}
 			else
 			{
-				ToastService.ShowError(postResults.Info);
+				ToastService.ShowError(res.Info);
 			}
 		}
 		catch (Exception e)
@@ -115,11 +147,31 @@
 		}
 	}
 
-	private void CreatePost() {
+	private async Task CreatePost()
+	{
+		newPost.CreatedBy = Services.UserService.user.UserId;
+		newPost.ThreadId = thread.ThreadId;
 
+		try
+		{
+			var res = await PostService.CreatePost(newPost);
+
+			if(res.Success) {
+				newPost.Message = null;
+				await GetPosts();
+			} else
+			{
+				ToastService.ShowError(res.Info);
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message);
+		}
 	}
 
-	public void Dispose() {
+	public void Dispose()
+	{
 
 	}
 }

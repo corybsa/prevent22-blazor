@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Telerik.Blazor.Components;
 
 namespace Prevent22.Client.Services
 {
@@ -19,9 +20,10 @@ namespace Prevent22.Client.Services
 			_http = http;
 		}
 
-		public async Task<DbResponse<User>> GetUsers()
+		public async Task<DbResponse<User>> GetUsers(GridReadEventArgs args)
 		{
-			return await _http.GetFromJsonAsync<DbResponse<User>>("api/test/users");
+			var res = await _http.PostAsJsonAsync("api/users", args);
+			return await res.Content.ReadFromJsonAsync<DbResponse<User>>();
 		}
 
 		public async Task<DbResponse<User>> GetUser(int userId)

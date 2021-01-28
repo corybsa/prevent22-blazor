@@ -21,8 +21,8 @@
 
 <div class="px-4 p-4">
 	<div class="container">
-		<AuthorizeView Policy="@Policies.IsAdmin">
-			<TelerikButton Class="mb-3" @onclick="CreateThread">Create new thread</TelerikButton>
+		<AuthorizeView>
+			<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateThread">Create new thread</TelerikButton>
 		</AuthorizeView>
 		<TelerikListView Data="@threads" Pageable="true">
 			<HeaderTemplate>

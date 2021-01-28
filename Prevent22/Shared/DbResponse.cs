@@ -9,6 +9,7 @@ namespace Prevent22.Shared
 	{
 		public bool Success { get; set; }
 		public List<T> Data { get; set; }
+		public int DataTotalCount { get; set; }
 		public string Info { get; set; }
 	}
 }

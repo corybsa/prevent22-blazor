@@ -4,6 +4,23 @@
 @using Prevent22.Shared
 @using Auth
 
+<style>
+	.dropdown-admin-divider {
+		height: auto;
+		font-size: 0.8rem;
+		padding-left: 10px;
+		margin-bottom: 0;
+		color: lightgray;
+	}
+
+	@@media (min-width: 768px) {
+		.nav-item-right {
+			position: absolute;
+			right: 20px;
+		}
+	}
+</style>
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
 	<div style="
 		position: absolute;
@@ -47,26 +64,25 @@
 			<li class="nav-item">
 				<NavLink class="nav-link" href="https://www.bootandheel.com/category/prevent-22" target="_blank" rel="noreferrer">Gear &amp; Apparel</NavLink>
 			</li>
-			<AuthorizeView Policy="@Policies.IsAdmin">
+			<AuthorizeView>
 				<Authorized>
-					<li class="nav-item dropdown @AdminDropDownClass">
-						<a id="adminDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showAdminDropDown" @onclick="(() => showAdminDropDown = !showAdminDropDown)">
-							Admin
+					<li class="nav-item nav-item-right dropdown @ProfileDropDownClass">
+						<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showProfileDropDown" @onclick="(() => showProfileDropDown = !showProfileDropDown)">
+							@(Services.UserService.user != null ? Services.UserService.user.Username : "profile")
 						</a>
-						<div class="dropdown-menu @AdminDropDownClass" aria-labelledby="adminDropdown" @onclick="(() => showAdminDropDown = !showAdminDropDown)">
-							<a class="dropdown-item disabled" href="#">Manage users</a>
+						<div class="dropdown-menu dropdown-menu-right @ProfileDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showProfileDropDown = !showProfileDropDown)">
+							<a class="dropdown-item disabled" href="#">Profile</a>
+							<AuthorizeView Policy="@Policies.IsAdmin" Context="AdminDropdownContext">
+								<div class="dropdown-divider dropdown-admin-divider">Admin Options</div>
+								<a class="dropdown-item" href="/admin">Manage Users</a>
+							</AuthorizeView>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="#" @onclick="Logout">Logout</a>
 						</div>
 					</li>
 				</Authorized>
-			</AuthorizeView>
-			<AuthorizeView>
-				<Authorized>
-					<li class="nav-item">
-						<a class="nav-link" href="#" tabindex="-1" @onclick="Logout">Logout</a>
-					</li>
-				</Authorized>
 				<NotAuthorized>
-					<li class="nav-item">
+					<li class="nav-item nav-item-right">
 						<NavLink href="/login" class="nav-link">Login</NavLink>
 					</li>
 				</NotAuthorized>
@@ -89,12 +105,12 @@
 	private bool collapseNavMenu = true;
 	private bool showResourcesDropDown = false;
 	private bool showSearchDropDown = false;
-	private bool showAdminDropDown = false;
+	private bool showProfileDropDown = false;
 
 	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 	private string ResourcesDropDownClass => showResourcesDropDown ? "show" : null;
 	private string SearchDropDownClass => showSearchDropDown ? "show" : null;
-	private string AdminDropDownClass => showAdminDropDown ? "show" : null;
+	private string ProfileDropDownClass => showProfileDropDown ? "show" : null;
 
 	private void ToggleNavMenu()
 	{

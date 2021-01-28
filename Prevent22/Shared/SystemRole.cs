@@ -9,5 +9,19 @@ namespace Prevent22.Shared
 		public const int Admin = 1;
 		public const int Moderator = 2;
 		public const int User = 3;
+		public static string[] Names = { "Admin", "Moderator", "User", null };
+
+		public static string GetName(int roleId)
+		{
+			switch (roleId)
+			{
+				case Admin:
+					return "Admin";
+				case Moderator:
+					return "Moderator";
+				default:
+					return "User";
+			}
+		}
 	}
 }

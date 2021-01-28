@@ -8,8 +8,8 @@ namespace Prevent22.Client.Services
 {
 	public interface IAuthService
 	{
-		Task<AuthResponse<string>> Login(AuthInfo auth);
+		Task<AuthResponse<User>> Login(AuthInfo auth);
 		Task<DbResponse<User>> Check(int userId);
-		Task<AuthResponse<string>> Register(UserRegister user);
+		Task<AuthResponse<User>> Register(UserRegister user);
 	}
 }

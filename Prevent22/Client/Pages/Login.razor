@@ -49,9 +49,10 @@
 			// hopefully clear password from memory
 			user.Password = null;
 			Services.AuthService.IsLoggedIn = true;
-			await LocalStorage.SetItemAsync<string>(LocalStorageKey.UserId, result.Data);
+			await LocalStorage.SetItemAsync<int>(LocalStorageKey.UserId, result.Data.UserId);
 			await LocalStorage.SetItemAsync<string>(LocalStorageKey.Token, result.Message);
 			await AuthStateProvider.GetAuthenticationStateAsync();
+			Services.UserService.user = result.Data;
 			NavigationManager.NavigateTo("");
 		}
 		else

@@ -13,6 +13,7 @@ namespace Prevent22.Shared
 		public string Password { get; set; }
 		public string Hash { get; set; }
 		public int RoleId { get; set; }
+		public string RoleName { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Email { get; set; }
@@ -23,5 +24,7 @@ namespace Prevent22.Shared
 		public string Phone { get; set; }
 		public bool IsBanned { get; set; }
 		public DateTime BannedUntil { get; set; }
+		public int BannedById { get; set; }
+		public string BannedByUsername { get; set; }
 	}
 }

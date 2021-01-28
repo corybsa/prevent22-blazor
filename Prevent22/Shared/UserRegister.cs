@@ -7,7 +7,7 @@ namespace Prevent22.Shared
 {
 	public class UserRegister
 	{
-		[Required, StringLength(255, ErrorMessage = "Username is too long (255 characters max)")]
+		[Required, StringLength(50, ErrorMessage = "Username is too long (50 characters max)")]
 		public string Username { get; set; }
 		[
 			Required,

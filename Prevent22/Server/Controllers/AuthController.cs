@@ -35,7 +35,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Login(AuthInfo auth)
 		{
-			var response = new AuthResponse<string>();
+			var response = new AuthResponse<User>();
 
 			if (auth.Username == string.Empty)
 			{
@@ -67,7 +67,7 @@ namespace Prevent22.Server.Controllers
 					return BadRequest(response);
 				}
 
-				response.Data = user.UserId.ToString();
+				response.Data = user;
 				response.Message = CreateToken(user);
 			}
 			catch (Exception e)
@@ -125,7 +125,7 @@ namespace Prevent22.Server.Controllers
 				hash = $"{iterations}.{salt}.{key}";
 			}
 
-			var response = new AuthResponse<string>();
+			var response = new AuthResponse<User>();
 
 			try
 			{
@@ -136,7 +136,7 @@ namespace Prevent22.Server.Controllers
 
 				var res = (await _helper.ExecStoredProcedure<User>("sp_Users", parameters)).Data.First();
 
-				response.Data = res.UserId.ToString();
+				response.Data = res;
 				response.Message = CreateToken(res);
 			}
 			catch (Exception e)

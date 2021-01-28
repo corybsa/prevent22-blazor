@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Prevent22.Shared;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -22,10 +23,14 @@ namespace Prevent22.Client.Services
 			_localStorage = localStorage;
 		}
 
-		public async Task<AuthResponse<string>> Login(AuthInfo auth)
+		public async Task<AuthResponse<User>> Login(AuthInfo auth)
 		{
 			var result = await _http.PostAsJsonAsync("api/auth", auth);
-			return await result.Content.ReadFromJsonAsync<AuthResponse<string>>();
+
+			var data = await result.Content.ReadFromJsonAsync<AuthResponse<User>>();
+			UserService.user = data.Data;
+
+			return data;
 		}
 
 		public async Task<DbResponse<User>> Check(int userId)
@@ -40,13 +45,20 @@ namespace Prevent22.Client.Services
 				_nav.NavigateTo("/", forceLoad: true);
 			}
 
-			return await result.Content.ReadFromJsonAsync<DbResponse<User>>();
+			var data = await result.Content.ReadFromJsonAsync<DbResponse<User>>();
+			UserService.user = data.Data.First();
+
+			return data;
 		}
 
-		public async Task<AuthResponse<string>> Register(UserRegister user)
+		public async Task<AuthResponse<User>> Register(UserRegister user)
 		{
 			var result = await _http.PostAsJsonAsync("api/auth/register", user);
-			return await result.Content.ReadFromJsonAsync<AuthResponse<string>>();
+
+			var data = await result.Content.ReadFromJsonAsync<AuthResponse<User>>();
+			UserService.user = data.Data;
+
+			return data;
 		}
 	}
 }

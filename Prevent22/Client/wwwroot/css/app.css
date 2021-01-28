@@ -24,11 +24,17 @@ a.p22-link > svg {
     color: black;
 }
 
-.btn-primary {
+.btn-p22 {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: hsl(354, 70%, 54%);
+    border-color: hsl(354, 70%, 54%);
 }
+
+    .btn-p22:hover {
+        color: white;
+        background-color: hsl(354, 70%, 46%);
+        border-color: hsl(354, 70%, 44%);
+    }
 
 #app {
     position: relative;
@@ -163,6 +169,36 @@ a.p22-link > svg {
 .blazored-toast-container {
     z-index: 999;
 }
+
+
+/* ##### Kendo overrides ##### */
+.k-pager-nav.k-link {
+    color: hsl(354, 70%, 54%) !important;
+}
+
+.k-pager-numbers .k-link.k-state-selected {
+    border-color: hsl(354, 70%, 54%) !important;
+    background-color: hsl(354, 70%, 54%) !important;
+    color: white !important;
+}
+
+.k-pager-numbers .k-link {
+    color: hsl(354, 70%, 54%) !important;
+}
+
+.k-button.k-button-p22 {
+    background-color: hsl(354, 70%, 54%);
+    color: white;
+    border-color: hsl(354, 70%, 54%);
+}
+
+.k-button.k-button-p22:hover {
+    color: white;
+    background-color: hsl(354, 70%, 46%);
+    border-color: hsl(354, 70%, 44%);
+}
+
+/* ##### Media queries ##### */
 
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {

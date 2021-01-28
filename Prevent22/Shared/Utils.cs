@@ -39,11 +39,15 @@ namespace Prevent22.Shared
 
 			if (days == 0)
 			{
-				sb.Append($"Today");
+				sb.Append("Today");
+			}
+			else if (days == 1)
+			{
+				sb.Append("1 day ago");
 			}
 			else
 			{
-				sb.Append($"{days} day ago");
+				sb.Append($"{days} days ago");
 			}
 
 			return sb.ToString();
