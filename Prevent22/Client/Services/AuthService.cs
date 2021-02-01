@@ -46,7 +46,11 @@ namespace Prevent22.Client.Services
 			}
 
 			var data = await result.Content.ReadFromJsonAsync<DbResponse<User>>();
-			UserService.user = data.Data.First();
+
+			if (data.Data != null)
+			{
+				UserService.user = data.Data.First();
+			}
 
 			return data;
 		}

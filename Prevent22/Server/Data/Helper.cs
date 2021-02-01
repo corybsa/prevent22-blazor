@@ -138,7 +138,6 @@ namespace Prevent22.Server
 
 		public DbResponse<T> FilterGridData<T>(DbResponse<T> response, GridReadEventArgs args)
 		{
-			Console.WriteLine(args.Request.Filters.Count);
 			try
 			{
 				bool filteredOnce = false;
@@ -149,7 +148,6 @@ namespace Prevent22.Server
 					filters.FilterDescriptors.AsList().ForEach(x =>
 					{
 						FilterDescriptor filter = (FilterDescriptor)x;
-						Console.WriteLine(filter.ConvertedValue);
 
 						if (!filteredOnce) // first iteration
 						{
