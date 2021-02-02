@@ -1,16 +1,115 @@
 ﻿@using Prevent22.Shared;
+@inject Services.IRolesService RolesService
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
 
 <EditForm Model="Data" OnValidSubmit="Submit">
 	<DataAnnotationsValidator />
 	<div class="row">
-		<div class="col-12">
+		<div class="col-12 col-sm-6">
 			<div class="mb-2">
-				<label for="threadName">Role</label>
-				@* need a dropdown *@
-				@*<ValidationMessage For="@(() => tap.ThreadName)" />*@
+				<label for="firstName">First Name</label>
+				<TelerikTextBox Id="firstName" @bind-Value="Data.FirstName" AutoComplete="given-name" Width="100%" />
+				<ValidationMessage For="@(() => Data.FirstName)" />
+			</div>
+		</div>
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="lastName">Last Name</label>
+				<TelerikTextBox @bind-Value="Data.LastName" AutoComplete="family-name" Width="100%" />
+				<ValidationMessage For="@(() => Data.LastName)" />
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="email">Email</label>
+				<TelerikTextBox Id="email" @bind-Value="Data.Email" AutoComplete="email" InputMode="email" Width="100%" />
+				<ValidationMessage For="@(() => Data.Email)" />
+			</div>
+		</div>
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="roleId">Role</label>
+				@if (roles != null)
+				{
+					<TelerikDropDownList Id="roleId"
+										 Data="@roles"
+										 TextField="RoleName"
+										 ValueField="RoleId"
+										 @bind-Value="Data.RoleId"
+										 DefaultText="Select a role..."
+										 Width="100%">
+					</TelerikDropDownList>
+					<ValidationMessage For="@(() => Data.RoleId)" />
+				}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="country">Country</label>
+				<TelerikTextBox Id="country" @bind-Value="Data.Country" AutoComplete="country-name" Width="100%" />
+				<ValidationMessage For="@(() => Data.Country)" />
+			</div>
+		</div>
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="state">State</label>
+				<TelerikTextBox Id="state" @bind-Value="Data.State" AutoComplete="address-level1" Width="100%" />
+				<ValidationMessage For="@(() => Data.State)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="city">City</label>
+				<TelerikTextBox Id="city" @bind-Value="Data.City" AutoComplete="address-level2" Width="100%" />
+				<ValidationMessage For="@(() => Data.City)" />
+			</div>
+		</div>
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="zipCode">Zip Code</label>
+				<TelerikTextBox Id="zipCode" @bind-Value="Data.ZipCode" AutoComplete="postal-code" Width="100%" />
+				<ValidationMessage For="@(() => Data.ZipCode)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="address">Address</label>
+				<TelerikTextBox Id="address" @bind-Value="Data.Address" AutoComplete="street-address" Width="100%" />
+				<ValidationMessage For="@(() => Data.Address)" />
+			</div>
+		</div>
+		<div class="col-12 col-sm-6">
+			<div class="mb-2">
+				<label for="phone">Phone</label>
+				<TelerikTextBox Id="phone" @bind-Value="Data.Phone" InputMode="tel" AutoComplete="tel" Width="100%" />
+				<ValidationMessage For="@(() => Data.Phone)" />
+			</div>
+		</div>
+	</div>
+	<div class="mb-2 form-check">
+		<TelerikCheckBox Id="isBanned" @bind-Value="@Data.IsBanned" />
+		<label for="isBanned">Banned from forum?</label>
+	</div>
+	@if (Data.IsBanned)
+	{
+		<div class="row">
+			<div class="col-12 col-sm-6">
+				<div class="mb-2">
+					<label for="address">Address</label>
+					<TelerikDateTimePicker Min="@DateTime.Now" @bind-Value="@Data.BannedUntil" Format="MM/dd/yyyy HH:mm" Width="100%" />
+				</div>
+			</div>
+		</div>
+	}
 	<button type="submit" class="btn btn-p22">Submit</button>
 </EditForm>
 
@@ -18,30 +117,58 @@
 	[Parameter]
 	public User Data { get; set; }
 
-	private async Task Submit()
+	private List<SystemRole> roles;
+
+	protected override async Task OnInitializedAsync()
 	{
-		@*try
+		await GetData();
+	}
+
+	private async Task GetData()
+	{
+		try
 		{
-			// create new thread
-			var thread = new Thread();
-			thread.ThreadName = tap.ThreadName;
-			thread.CreatedBy = Services.UserService.user.UserId;
-			thread.BoardId = Data;
+			var res = await RolesService.GetRoles();
 
-			var res = await ThreadService.CreateThread(thread);
-
-			if (!res.Success)
+			if (res.Success)
 			{
-				ToastService.ShowError(res.Info, "Error");
+				roles = res.Data;
 			}
 			else
 			{
-				await CreatePost(res.Data.First());
+				ToastService.ShowError(res.Info, "test Error");
 			}
 		}
 		catch (Exception e)
 		{
-			ToastService.ShowError(e.Message, "Error");
-		}*@
+			ToastService.ShowError(e.Message);
+		}
+	}
+
+	private async Task Submit()
+	{
+		@*try
+			{
+				// create new thread
+				var thread = new Thread();
+				thread.ThreadName = tap.ThreadName;
+				thread.CreatedBy = Services.UserService.user.UserId;
+				thread.BoardId = Data;
+
+				var res = await ThreadService.CreateThread(thread);
+
+				if (!res.Success)
+				{
+					ToastService.ShowError(res.Info, "Error");
+				}
+				else
+				{
+					await CreatePost(res.Data.First());
+				}
+			}
+			catch (Exception e)
+			{
+				ToastService.ShowError(e.Message, "Error");
+			}*@
 	}
 }

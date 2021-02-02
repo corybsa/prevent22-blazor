@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Prevent22.Shared
 {
-	public static class SystemRole
+	public class SystemRole
 	{
 		public const int Admin = 1;
 		public const int Moderator = 2;
@@ -23,5 +23,9 @@ namespace Prevent22.Shared
 					return "User";
 			}
 		}
+
+		public int RoleId { get; set; }
+		public string RoleName { get; set; }
+		public string RoleDescription { get; set; }
 	}
 }

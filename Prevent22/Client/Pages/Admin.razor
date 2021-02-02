@@ -27,6 +27,9 @@
 					 ShowColumnMenu="true"
 					 OnRowClick="UpdateUser"
 					 OnRead="ReadPage">
+			<GridToolBar>
+				<GridSearchBox DebounceDelay="200"></GridSearchBox>
+			</GridToolBar>
 			<GridColumns>
 				<GridColumn Field="@(nameof(User.Username))" Title="Username" />
 				<GridColumn Field="@(nameof(User.RoleName))" Title="Role" />

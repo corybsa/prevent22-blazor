@@ -50,6 +50,7 @@ namespace Prevent22.Server
 					// execute stored procedure
 					response.Success = true;
 					response.Data = (await conn.QueryAsync<T>(proc, parameters, commandType: CommandType.StoredProcedure)).ToList();
+					response.DataTotalCount = response.Data.Count;
 					Console.WriteLine(GetStatement(proc, parameters, null));
 				}
 				catch (SqlException e)
