@@ -13,44 +13,44 @@ namespace Prevent22.Shared
 				return "No posts";
 			}
 
-			var sb = new StringBuilder();
-			var now = DateTime.Now;
-			int? years = now.Year - dateTime?.Year;
-			int? months = now.Month - dateTime?.Month;
-			int? days = now.Day - dateTime?.Day;
+			TimeSpan ts = DateTime.Now.Subtract(dateTime.GetValueOrDefault(DateTime.Now));
 
-			if (years == 1)
-			{
-				sb.Append($"{years} year, ");
-			}
-			else if (years > 1)
-			{
-				sb.Append($"{years} years, ");
-			}
+			// The trick: make variable contain date and time representing the desired timespan,
+			// having +1 in each date component.
+			DateTime date = DateTime.MinValue + ts;
 
-			if (months == 1)
+			return ProcessPeriod(date.Year - 1, date.Month - 1, "year")
+				   ?? ProcessPeriod(date.Month - 1, date.Day - 1, "month")
+				   ?? ProcessPeriod(date.Day - 1, date.Hour, "day", "Yesterday")
+				   ?? ProcessPeriod(date.Hour, date.Minute, "hour")
+				   ?? ProcessPeriod(date.Minute, date.Second, "minute")
+				   ?? ProcessPeriod(date.Second, 0, "second")
+				   ?? "Right now";
+		}
+
+		private static string ProcessPeriod(int value, int subValue, string name, string singularName = null)
+		{
+			if (value == 0)
 			{
-				sb.Append($"{months} month, ");
-			}
-			else if (months > 1)
-			{
-				sb.Append($"{months} months, ");
+				return null;
 			}
 
-			if (days == 0)
+			if (value == 1)
 			{
-				sb.Append("Today");
-			}
-			else if (days == 1)
-			{
-				sb.Append("1 day ago");
-			}
-			else
-			{
-				sb.Append($"{days} days ago");
+				if (!string.IsNullOrEmpty(singularName))
+				{
+					return singularName;
+				}
+
+				string articleSuffix = name[0] == 'h' ? "n" : string.Empty;
+				return subValue == 0
+					? string.Format("A{0} {1} ago", articleSuffix, name)
+					: string.Format("About a{0} {1} ago", articleSuffix, name);
 			}
 
-			return sb.ToString();
+			return subValue == 0
+				? string.Format("{0} {1}s ago", value, name)
+				: string.Format("About {0} {1}s ago", value, name);
 		}
 	}
 }

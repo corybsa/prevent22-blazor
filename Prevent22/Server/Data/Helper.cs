@@ -60,6 +60,13 @@ namespace Prevent22.Server
 					response.Success = false;
 					response.Info = exec;
 
+					// constraint error
+					if (e.Number == 547)
+					{
+						Console.WriteLine(response.Info);
+						throw new Exception("There are items associated with this record. The action can't be performed.");
+					}
+
 					throw new Exception(e.Message);
 				}
 				catch (Exception e)
