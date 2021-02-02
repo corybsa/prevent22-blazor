@@ -1,5 +1,6 @@
 ﻿@using Prevent22.Shared;
 @inject Services.IRolesService RolesService
+@inject Services.IUserService UserService
 @inject IToastService ToastService
 @inject Services.IFlyoutService Flyout
 
@@ -104,8 +105,8 @@
 		<div class="row">
 			<div class="col-12 col-sm-6">
 				<div class="mb-2">
-					<label for="address">Address</label>
-					<TelerikDateTimePicker Min="@DateTime.Now" @bind-Value="@Data.BannedUntil" Format="MM/dd/yyyy HH:mm" Width="100%" />
+					<label for="bannedUntil">Banned Until</label>
+					<TelerikDateTimePicker Id="bannedUntil" Min="@DateTime.Now" @bind-Value="@Data.BannedUntil" Format="MM/dd/yyyy HH:mm" Width="100%" />
 				</div>
 			</div>
 		</div>
@@ -147,28 +148,24 @@
 
 	private async Task Submit()
 	{
-		@*try
+		try
+		{
+			var res = await UserService.UpdateUser(Data);
+
+			if (res.Success)
 			{
-				// create new thread
-				var thread = new Thread();
-				thread.ThreadName = tap.ThreadName;
-				thread.CreatedBy = Services.UserService.user.UserId;
-				thread.BoardId = Data;
-
-				var res = await ThreadService.CreateThread(thread);
-
-				if (!res.Success)
-				{
-					ToastService.ShowError(res.Info, "Error");
-				}
-				else
-				{
-					await CreatePost(res.Data.First());
-				}
+				ToastService.ShowSuccess("User updated", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
 			}
-			catch (Exception e)
+			else
 			{
-				ToastService.ShowError(e.Message, "Error");
-			}*@
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
 	}
 }

@@ -47,5 +47,38 @@ namespace Prevent22.Server.Controllers
 
 			return Ok(response);
 		}
+
+		[HttpPost("update")]
+		public async Task<IActionResult> UpdateUser(User user)
+		{
+			var response = new DbResponse<User>();
+
+			try {
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Update);
+				parameters.Add("UserId", user.UserId);
+				parameters.Add("RoleId", user.RoleId);
+				parameters.Add("FirstName", user.FirstName);
+				parameters.Add("LastName", user.LastName);
+				parameters.Add("Email", user.Email);
+				parameters.Add("Country", user.Country);
+				parameters.Add("State", user.State);
+				parameters.Add("City", user.City);
+				parameters.Add("ZipCode", user.ZipCode);
+				parameters.Add("Address", user.Address);
+				parameters.Add("Phone", user.Phone);
+				parameters.Add("IsBanned", user.IsBanned);
+				parameters.Add("BannedUntil", user.BannedUntil);
+
+				response = await _helper.ExecStoredProcedure<User>("sp_Users", parameters);
+			} catch(Exception e)
+			{
+				response.Success = false;
+				response.Info = e.Message;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
 	}
 }

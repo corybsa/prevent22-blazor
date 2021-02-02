@@ -26,5 +26,10 @@ namespace Prevent22.Client.Services
 		{
 			return await Get<DbResponse<User>>($"api/test/user/{userId}");
 		}
+
+		public async Task<DbResponse<User>> UpdateUser(User user)
+		{
+			return await Post<DbResponse<User>>("api/users/update", user);
+		}
 	}
 }

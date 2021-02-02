@@ -87,6 +87,7 @@
 	{
 		User user = (User)e.Item;
 		Flyout.Open<User>($"Update {user.Username}'s info", typeof(Client.Flyout.Users.UsersUpdate), user);
+		Flyout.OnSuccess = async () => await ReadPage(previousArgs);
 	}
 
 	public void Dispose()
