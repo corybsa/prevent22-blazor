@@ -1,35 +1,105 @@
 ﻿@page "/events"
+@implements IDisposable
 @inject Services.IFlyoutService Flyout
+@inject Services.BrowserService BrowserService
+@inject Services.IEventService EventService
+@inject IToastService ToastService
 @using Prevent22.Shared
+@using Auth
 
-<TelerikScheduler Data="@events" AllowUpdate="true" AllowDelete="true" OnEdit="@EditHandler" OnDelete="@DeleteAppointment">
+<TelerikScheduler Data="@events"
+				  AllowCreate="AllowActions"
+				  AllowUpdate="AllowActions"
+				  AllowDelete="AllowActions"
+				  @bind-View="CurrentView"
+				  IdField="@(nameof(Event.EventId))"
+				  OnCreate="@CreateEvent"
+				  OnEdit="@EditEvent"
+				  OnDelete="@DeleteEvent">
 	<SchedulerViews>
+		<SchedulerDayView />
 		<SchedulerMonthView />
 	</SchedulerViews>
 </TelerikScheduler>
 
 @code {
-	public List<Event> events = new List<Event>()
-	{
-		new Event() { Title = "event 1", Start = new DateTime(2021, 1, 10, 0, 0, 0) },
-		new Event() { Title = "event 2", Start = new DateTime(2021, 1, 11, 0, 0, 0), IsAllDay = true }
-	};
+	public List<Event> events;
+	public SchedulerView CurrentView { get; set; } = SchedulerView.Month;
+	public bool AllowActions = false;
 
-	void EditHandler(SchedulerEditEventArgs args)
+	protected override async Task OnInitializedAsync()
+	{
+		if (Services.UserService.user?.RoleId == SystemRole.Admin)
+		{
+			AllowActions = true;
+		}
+
+		await CheckMobile();
+		await GetData();
+	}
+
+	private async Task GetData()
+	{
+		try
+		{
+			var res = await EventService.GetEvents();
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				events = res.Data;
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	void CreateEvent(SchedulerCreateEventArgs args)
+	{
+		Console.WriteLine("how to create???");
+	}
+
+	void EditEvent(SchedulerEditEventArgs args)
 	{
 		Event e = args.Item as Event;
 
 		// an edit operation
 		if (!args.IsNew)
 		{
-			Flyout.Open<Event>($"Info for {e.Title}", typeof(Client.Flyout.EventDetails), e);
+			Flyout.Open<Event>($"Update {e.Title}", typeof(Client.Flyout.EventDetails), e);
+			Flyout.OnSuccess = async () => await GetData();
 		}
 
 		// prevent default window from opening
 		args.IsCancelled = true;
 	}
 
-	async Task DeleteAppointment(SchedulerDeleteEventArgs args) {
+	async Task DeleteEvent(SchedulerDeleteEventArgs args)
+	{
 		Console.WriteLine("test");
+	}
+
+	private async Task CheckMobile()
+	{
+		int windowWidth = await BrowserService.GetWidth();
+
+		if (windowWidth < 768)
+		{
+			CurrentView = SchedulerView.Day;
+		}
+		else
+		{
+			CurrentView = SchedulerView.Month;
+		}
+	}
+
+	public void Dispose()
+	{
+		Flyout.OnSuccess = null;
 	}
 }

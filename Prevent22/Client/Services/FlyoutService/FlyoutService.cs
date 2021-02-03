@@ -38,6 +38,7 @@ namespace Prevent22.Client.Services
 			IsOpen = false;
 			Title = null;
 			Content = null;
+			Data = null;
 
 			NotifyDataChanged();
 		}
