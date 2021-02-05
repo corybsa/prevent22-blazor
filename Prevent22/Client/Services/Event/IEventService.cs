@@ -9,5 +9,8 @@ namespace Prevent22.Client.Services
 	public interface IEventService
 	{
 		Task<DbResponse<Event>> GetEvents();
+		Task<DbResponse<Event>> CreateEvent(Event e);
+		Task<DbResponse<Event>> UpdateEvent(Event e);
+		Task<DbResponse<Event>> DeleteEvent(int eventId);
 	}
 }

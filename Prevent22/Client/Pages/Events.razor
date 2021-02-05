@@ -7,33 +7,39 @@
 @using Prevent22.Shared
 @using Auth
 
-<TelerikScheduler Data="@events"
-				  AllowCreate="AllowActions"
-				  AllowUpdate="AllowActions"
-				  AllowDelete="AllowActions"
-				  @bind-View="CurrentView"
-				  IdField="@(nameof(Event.EventId))"
-				  OnCreate="@CreateEvent"
-				  OnEdit="@EditEvent"
-				  OnDelete="@DeleteEvent">
-	<SchedulerViews>
-		<SchedulerDayView />
-		<SchedulerMonthView />
-	</SchedulerViews>
-</TelerikScheduler>
+<div class="px-4 p-4">
+	<div class="container-fluid">
+		@if (events == null)
+		{
+			<Loader />
+		}
+		else
+		{
+			<TelerikScheduler Data="@events"
+							  AllowCreate="Services.UserService.user?.RoleId == SystemRole.Admin"
+							  AllowUpdate="Services.UserService.user?.RoleId == SystemRole.Admin"
+							  AllowDelete="Services.UserService.user?.RoleId == SystemRole.Admin"
+							  @bind-View="CurrentView"
+							  IdField="@(nameof(Event.EventId))"
+							  OnCreate="@CreateEvent"
+							  OnUpdate="@UpdateEvent"
+							  OnEdit="@EditEvent"
+							  OnDelete="@DeleteEvent">
+				<SchedulerViews>
+					<SchedulerDayView />
+					<SchedulerMonthView />
+				</SchedulerViews>
+			</TelerikScheduler>
+		}
+	</div>
+</div>
 
 @code {
 	public List<Event> events;
 	public SchedulerView CurrentView { get; set; } = SchedulerView.Month;
-	public bool AllowActions = false;
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (Services.UserService.user?.RoleId == SystemRole.Admin)
-		{
-			AllowActions = true;
-		}
-
 		await CheckMobile();
 		await GetData();
 	}
@@ -64,6 +70,30 @@
 		Console.WriteLine("how to create???");
 	}
 
+	async Task UpdateEvent(SchedulerUpdateEventArgs args)
+	{
+		Event e = args.Item as Event;
+
+		try
+		{
+			var res = await EventService.UpdateEvent(e);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info);
+			}
+			else
+			{
+				events = res.Data;
+				ToastService.ShowSuccess("Event updated", "Success");
+			}
+		}
+		catch (Exception ex)
+		{
+			ToastService.ShowError(ex.Message);
+		}
+	}
+
 	void EditEvent(SchedulerEditEventArgs args)
 	{
 		Event e = args.Item as Event;
@@ -81,7 +111,26 @@
 
 	async Task DeleteEvent(SchedulerDeleteEventArgs args)
 	{
-		Console.WriteLine("test");
+		Event e = args.Item as Event;
+
+		try
+		{
+			var res = await EventService.DeleteEvent(e.EventId);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info);
+			}
+			else
+			{
+				events = res.Data;
+				ToastService.ShowSuccess("Event deleted", "Success");
+			}
+		}
+		catch (Exception ex)
+		{
+			ToastService.ShowError(ex.Message);
+		}
 	}
 
 	private async Task CheckMobile()

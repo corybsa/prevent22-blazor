@@ -11,11 +11,13 @@ namespace Prevent22.Shared
 		[Required(ErrorMessage = "Event title is required.")]
 		public string Title { get; set; }
 		public string Description { get; set; }
+		public string Location { get; set; }
 		[Required(ErrorMessage = "Start date is required.")]
 		public DateTime Start { get; set; }
-		public DateTime? End { get; set; }
+		[Required(ErrorMessage = "End date is required.")]
+		public DateTime End { get; set; }
 		public bool IsAllDay { get; set; }
-		public string RucrrenceRule { get; set; }
+		public string RecurrenceRule { get; set; }
 		public int VolunteerCount { get; set; }
 	}
 }

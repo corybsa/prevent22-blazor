@@ -20,53 +20,60 @@
 
 <div class="px-4 p-4">
 	<div class="container">
-		<AuthorizeView Policy="@Policies.IsAdmin">
-			<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateBoard">Create new board</TelerikButton>
-		</AuthorizeView>
-		<TelerikListView Data="@boards" Pageable="true">
-			<HeaderTemplate>
-				<div class="container" style="background: hsl(210, 17%, 98%);">
-					<div class="row">
-						<div class="col-6">
-							<h6 class="mt-1 mb-1">Board</h6>
-						</div>
-						<div class="col-2 text-center d-none d-sm-block">
-							<h6 class="mt-1 mb-1">Threads</h6>
-						</div>
-						<div class="col-2 text-center d-none d-md-block">
-							<h6 class="mt-1 mb-1">Posts</h6>
-						</div>
-						<div class="col-6 col-sm-4 col-md-2 text-center">
-							<h6 class="mt-1 mb-1">Last Post</h6>
+		@if (boards == null)
+		{
+			<Loader />
+		}
+		else
+		{
+			<AuthorizeView Policy="@Policies.IsAdmin">
+				<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateBoard">Create new board</TelerikButton>
+			</AuthorizeView>
+			<TelerikListView Data="@boards" Pageable="true">
+				<HeaderTemplate>
+					<div class="container" style="background: hsl(210, 17%, 98%);">
+						<div class="row">
+							<div class="col-6">
+								<h6 class="mt-1 mb-1">Board</h6>
+							</div>
+							<div class="col-2 text-center d-none d-sm-block">
+								<h6 class="mt-1 mb-1">Threads</h6>
+							</div>
+							<div class="col-2 text-center d-none d-md-block">
+								<h6 class="mt-1 mb-1">Posts</h6>
+							</div>
+							<div class="col-6 col-sm-4 col-md-2 text-center">
+								<h6 class="mt-1 mb-1">Last Post</h6>
+							</div>
 						</div>
 					</div>
-				</div>
-			</HeaderTemplate>
-			<Template>
-				<div class="container board" @onclick="@(() => GoToThreads(context.BoardId))">
-					<div class="row pt-2 pb-2">
-						<div class="col-6">
-							<p class="m-0">@context.BoardName</p>
-							<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
-						</div>
-						<div class="col-2 text-center d-none d-sm-block">
-							<p class="m-0">@context.ThreadCount</p>
-						</div>
-						<div class="col-2 text-center d-none d-md-block">
-							<p class="m-0">@context.PostCount</p>
-						</div>
-						<div class="col-6 col-sm-4 col-md-2 text-center">
-							<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
+				</HeaderTemplate>
+				<Template>
+					<div class="container board" @onclick="@(() => GoToThreads(context.BoardId))">
+						<div class="row pt-2 pb-2">
+							<div class="col-6">
+								<p class="m-0">@context.BoardName</p>
+								<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
+							</div>
+							<div class="col-2 text-center d-none d-sm-block">
+								<p class="m-0">@context.ThreadCount</p>
+							</div>
+							<div class="col-2 text-center d-none d-md-block">
+								<p class="m-0">@context.PostCount</p>
+							</div>
+							<div class="col-6 col-sm-4 col-md-2 text-center">
+								<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
 
-							@if (context.LastPostDate != null)
-							{
-								<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
-							}
+								@if (context.LastPostDate != null)
+									{
+									<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
+									}
+							</div>
 						</div>
 					</div>
-				</div>
-			</Template>
-		</TelerikListView>
+				</Template>
+			</TelerikListView>
+		}
 	</div>
 </div>
 

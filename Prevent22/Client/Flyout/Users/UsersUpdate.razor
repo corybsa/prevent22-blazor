@@ -131,13 +131,13 @@
 		{
 			var res = await RolesService.GetRoles();
 
-			if (res.Success)
+			if (!res.Success)
 			{
-				roles = res.Data;
+				ToastService.ShowError(res.Info, "Error");
 			}
 			else
 			{
-				ToastService.ShowError(res.Info, "test Error");
+				roles = res.Data;
 			}
 		}
 		catch (Exception e)
@@ -152,15 +152,15 @@
 		{
 			var res = await UserService.UpdateUser(Data);
 
-			if (res.Success)
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
 			{
 				ToastService.ShowSuccess("User updated", "Success");
 				Flyout.OnSuccess?.Invoke();
 				Flyout.Close();
-			}
-			else
-			{
-				ToastService.ShowError(res.Info, "Error");
 			}
 		}
 		catch (Exception e)

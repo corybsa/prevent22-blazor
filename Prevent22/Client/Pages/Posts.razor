@@ -35,51 +35,58 @@
 			<h3>@thread.ThreadName</h3>
 		}
 
-		<TelerikListView Data="@posts" Pageable="true">
-			<HeaderTemplate>
-				<div class="container" style="background: hsl(210, 17%, 98%);">
-					<div class="row">
-						<div class="col-2">
-							<h6 class="mt-1 mb-1">Author</h6>
-						</div>
-						<div class="col-10">
-							<h6 class="mt-1 mb-1">Posts</h6>
-						</div>
-					</div>
-				</div>
-			</HeaderTemplate>
-			<Template>
-				<div class="container post">
-					<div class="row post-header">
-						<div class="col-12" style="font-size: 0.8rem;">@context.CreatedDate.Value.ToString("MMMM dd, yyyy a\\t hh:mm tt")</div>
-					</div>
-					<div class="row pt-2 pb-2">
-						<div class="col-12 col-sm-2 post-author">
-							<p class="m-0">@context.Author</p>
-							<p class="m-0" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
-						</div>
-						<div class="col-12 col-sm-10 post-content">
-							<p class="m-0">@((MarkupString)(context.Message))</p>
+		@if (posts == null)
+		{
+			<Loader />
+		}
+		else
+		{
+			<TelerikListView Data="@posts" Pageable="true">
+				<HeaderTemplate>
+					<div class="container" style="background: hsl(210, 17%, 98%);">
+						<div class="row">
+							<div class="col-2">
+								<h6 class="mt-1 mb-1">Author</h6>
+							</div>
+							<div class="col-10">
+								<h6 class="mt-1 mb-1">Posts</h6>
+							</div>
 						</div>
 					</div>
-				</div>
-			</Template>
-		</TelerikListView>
+				</HeaderTemplate>
+				<Template>
+					<div class="container post">
+						<div class="row post-header">
+							<div class="col-12" style="font-size: 0.8rem;">@context.CreatedDate.Value.ToString("MMMM dd, yyyy a\\t hh:mm tt")</div>
+						</div>
+						<div class="row pt-2 pb-2">
+							<div class="col-12 col-sm-2 post-author">
+								<p class="m-0">@context.Author</p>
+								<p class="m-0" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
+							</div>
+							<div class="col-12 col-sm-10 post-content">
+								<p class="m-0">@((MarkupString)(context.Message))</p>
+							</div>
+						</div>
+					</div>
+				</Template>
+			</TelerikListView>
 
-		<AuthorizeView>
-			<h5 style="margin-top: 10px;">Reply to this thread</h5>
-			<EditForm Model="@newPost" OnValidSubmit="CreatePost" Context="formContext">
-				<div class="row">
-					<div class="col-12">
-						<div class="mb-2">
-							<TelerikEditor @bind-Value="newPost.Message" Width="100%" Height="400px"></TelerikEditor>
-							<ValidationMessage For="@(() => newPost.Message)" />
+			<AuthorizeView>
+				<h5 style="margin-top: 10px;">Reply to this thread</h5>
+				<EditForm Model="@newPost" OnValidSubmit="CreatePost" Context="formContext">
+					<div class="row">
+						<div class="col-12">
+							<div class="mb-2">
+								<TelerikEditor @bind-Value="newPost.Message" Width="100%" Height="400px"></TelerikEditor>
+								<ValidationMessage For="@(() => newPost.Message)" />
+							</div>
 						</div>
 					</div>
-				</div>
-				<button type="submit" class="btn btn-p22">Submit</button>
-			</EditForm>
-		</AuthorizeView>
+					<button type="submit" class="btn btn-p22">Submit</button>
+				</EditForm>
+			</AuthorizeView>
+		}
 	</div>
 </div>
 
@@ -156,10 +163,12 @@
 		{
 			var res = await PostService.CreatePost(newPost);
 
-			if(res.Success) {
+			if (res.Success)
+			{
 				newPost.Message = null;
 				await GetPosts();
-			} else
+			}
+			else
 			{
 				ToastService.ShowError(res.Info);
 			}

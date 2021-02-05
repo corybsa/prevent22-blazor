@@ -69,6 +69,7 @@ namespace Prevent22.Server.Controllers
 
 				response.Data = user;
 				response.Message = CreateToken(user);
+				Client.Services.UserService.user = user;
 			}
 			catch (Exception e)
 			{
@@ -95,6 +96,7 @@ namespace Prevent22.Server.Controllers
 
 				response.Success = true;
 				response.Data = user;
+				Client.Services.UserService.user = user.First();
 			}
 			catch (Exception e)
 			{
@@ -138,6 +140,7 @@ namespace Prevent22.Server.Controllers
 
 				response.Data = res;
 				response.Message = CreateToken(res);
+				Client.Services.UserService.user = res;
 			}
 			catch (Exception e)
 			{

@@ -17,5 +17,20 @@ namespace Prevent22.Client.Services
 		{
 			return await Get<DbResponse<Event>>("api/events");
 		}
+
+		public async Task<DbResponse<Event>> CreateEvent(Event e)
+		{
+			return await Post<DbResponse<Event>>("api/events", e);
+		}
+
+		public async Task<DbResponse<Event>> UpdateEvent(Event e)
+		{
+			return await Put<DbResponse<Event>>("api/events", e);
+		}
+
+		public async Task<DbResponse<Event>> DeleteEvent(int eventId)
+		{
+			return await Delete<DbResponse<Event>>($"api/events/{eventId}");
+		}
 	}
 }

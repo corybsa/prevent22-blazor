@@ -119,11 +119,6 @@
 				{
 					ToastService.ShowError(res.Info, "Error");
 				}
-				else
-				{
-					Flyout.OnSuccess?.Invoke();
-					Flyout.Close();
-				}
 			}
 			catch (Exception e)
 			{
