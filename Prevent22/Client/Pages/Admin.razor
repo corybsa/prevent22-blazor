@@ -17,46 +17,57 @@
 <div class="px-4 p-4">
 	<div class="container-fluid">
 		<h3>Manage Users</h3>
-		<TelerikGrid Data="@users"
-					 Pageable="true"
-					 PageSize="@pageSize"
-					 TotalCount="@totalSize"
-					 Sortable="true"
-					 FilterMode="GridFilterMode.FilterMenu"
-					 Resizable="true"
-					 ShowColumnMenu="true"
-					 OnRowClick="UpdateUser"
-					 OnRead="ReadPage">
-			<GridToolBar>
-				<GridSearchBox DebounceDelay="200"></GridSearchBox>
-			</GridToolBar>
-			<GridColumns>
-				<GridColumn Field="@(nameof(User.Username))" Title="Username" />
-				<GridColumn Field="@(nameof(User.RoleName))" Title="Role" />
-				<GridColumn Field="@(nameof(User.FirstName))" Title="First name" Visible="false" />
-				<GridColumn Field="@(nameof(User.LastName))" Title="Last name" Visible="false" />
-				<GridColumn Field="@(nameof(User.Email))" Title="Email" Visible="false" />
-				<GridColumn Field="@(nameof(User.IsBanned))" Title="Banned?">
-					<Template>
-						@((context as User).IsBanned ? "Yes" : "No")
-					</Template>
-				</GridColumn>
-				<GridColumn Field="@(nameof(User.BannedUntil))" Title="Banned Until" Visible="false" />
-				<GridColumn Field="@(nameof(User.BannedById))" Title="Banned By Id" Visible="false" />
-				<GridColumn Field="@(nameof(User.BannedByUsername))" Title="Banned By" Visible="false" />
-			</GridColumns>
-		</TelerikGrid>
+		@if (users == null)
+		{
+			<Loader />
+		}
+		else
+		{
+			<TelerikGrid Data="@users"
+						 Pageable="true"
+						 PageSize="@pageSize"
+						 TotalCount="@totalSize"
+						 Sortable="true"
+						 FilterMode="GridFilterMode.FilterMenu"
+						 Resizable="true"
+						 ShowColumnMenu="true"
+						 OnRowClick="UpdateUser"
+						 OnRead="ReadPage">
+				<GridToolBar>
+					<GridSearchBox DebounceDelay="200"></GridSearchBox>
+				</GridToolBar>
+				<GridColumns>
+					<GridColumn Field="@(nameof(User.Username))" Title="Username" />
+					<GridColumn Field="@(nameof(User.RoleName))" Title="Role" />
+					<GridColumn Field="@(nameof(User.FirstName))" Title="First name" Visible="false" />
+					<GridColumn Field="@(nameof(User.LastName))" Title="Last name" Visible="false" />
+					<GridColumn Field="@(nameof(User.Email))" Title="Email" Visible="false" />
+					<GridColumn Field="@(nameof(User.IsBanned))" Title="Banned?">
+						<Template>
+							@((context as User).IsBanned ? "Yes" : "No")
+						</Template>
+					</GridColumn>
+					<GridColumn Field="@(nameof(User.BannedUntil))" Title="Banned Until" Visible="false" />
+					<GridColumn Field="@(nameof(User.BannedById))" Title="Banned By Id" Visible="false" />
+					<GridColumn Field="@(nameof(User.BannedByUsername))" Title="Banned By" Visible="false" />
+				</GridColumns>
+			</TelerikGrid>
+		}
 	</div>
 </div>
 
 @code {
-	List<User> users = new List<User>();
+	List<User> users;
 	int pageSize = 10;
 	int totalSize;
 	GridReadEventArgs previousArgs;
 
 	FilterMenuTemplateContext RoleFilterContext { get; set; }
 	public List<string> CheckedRoles { get; set; } = new List<string>();
+
+	protected override async Task OnInitializedAsync() {
+		await ReadPage(Services.BaseService.GetEmptyGridArgs());
+	}
 
 	protected async Task ReadPage(GridReadEventArgs args)
 	{

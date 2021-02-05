@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Prevent22.Shared
 {
-	public class Event
+	public class Event : IValidatableObject
 	{
 		public int EventId { get; set; }
 		[Required(ErrorMessage = "Event title is required.")]
@@ -19,5 +19,16 @@ namespace Prevent22.Shared
 		public bool IsAllDay { get; set; }
 		public string RecurrenceRule { get; set; }
 		public int VolunteerCount { get; set; }
+
+		public IEnumerable<ValidationResult> Validate(ValidationContext context)
+		{
+			if (End < Start && End != Start)
+			{
+				yield return new ValidationResult(
+					errorMessage: "End must be after start.",
+					memberNames: new[] { "Start", "End" }
+				);
+			}
+		}
 	}
 }

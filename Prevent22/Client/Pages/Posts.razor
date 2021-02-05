@@ -73,18 +73,20 @@
 			</TelerikListView>
 
 			<AuthorizeView>
-				<h5 style="margin-top: 10px;">Reply to this thread</h5>
-				<EditForm Model="@newPost" OnValidSubmit="CreatePost" Context="formContext">
-					<div class="row">
-						<div class="col-12">
-							<div class="mb-2">
-								<TelerikEditor @bind-Value="newPost.Message" Width="100%" Height="400px"></TelerikEditor>
-								<ValidationMessage For="@(() => newPost.Message)" />
+				<Authorized>
+					<h5 style="margin-top: 10px;">Reply to this thread</h5>
+					<EditForm Model="@newPost" OnValidSubmit="CreatePost" Context="formContext">
+						<div class="row">
+							<div class="col-12">
+								<div class="mb-2">
+									<TelerikEditor @bind-Value="newPost.Message" Width="100%" Height="400px"></TelerikEditor>
+									<ValidationMessage For="@(() => newPost.Message)" />
+								</div>
 							</div>
 						</div>
-					</div>
-					<button type="submit" class="btn btn-p22">Submit</button>
-				</EditForm>
+						<button type="submit" class="btn btn-p22">Submit</button>
+					</EditForm>
+				</Authorized>
 			</AuthorizeView>
 		}
 	</div>

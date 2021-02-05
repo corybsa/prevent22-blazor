@@ -26,7 +26,6 @@ namespace Prevent22.Client.Services
 		public async Task<AuthResponse<User>> Login(AuthInfo auth)
 		{
 			var result = await _http.PostAsJsonAsync("api/auth", auth);
-
 			var data = await result.Content.ReadFromJsonAsync<AuthResponse<User>>();
 			UserService.user = data.Data;
 
@@ -58,7 +57,6 @@ namespace Prevent22.Client.Services
 		public async Task<AuthResponse<User>> Register(UserRegister user)
 		{
 			var result = await _http.PostAsJsonAsync("api/auth/register", user);
-
 			var data = await result.Content.ReadFromJsonAsync<AuthResponse<User>>();
 			UserService.user = data.Data;
 

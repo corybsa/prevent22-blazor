@@ -1,0 +1,102 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IEventService EventService
+
+<EditForm Model="@Data" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="eventTitle">Title</label>
+				<TelerikTextBox Id="eventTitle" @bind-Value="Data.Title" Width="100%" />
+				<ValidationMessage For="@(() => Data.Title)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="eventDescription">Description</label>
+				<textarea class="form-control" id="eventDescription" rows="3" @bind="Data.Description"></textarea>
+				<ValidationMessage For="@(() => Data.Description)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 form-check">
+			<TelerikCheckBox Id="isAllDay" @bind-Value="@Data.IsAllDay" />
+			<label for="isAllDay">All day event?</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<div class="mb-2">
+				<label for="startDate">Start Date</label>
+				@if (!Data.IsAllDay)
+				{
+					<TelerikDateTimePicker Id="startDate" @bind-Value="Data.Start" Format="MM/dd/yyyy hh:mm tt" Width="100%" />
+					<ValidationMessage For="@(() => Data.Start)" />
+				}
+				else
+				{
+					<TelerikDatePicker Id="startDate" @bind-Value="Data.Start" Format="MM/dd/yyyy" Width="100%" />
+					<ValidationMessage For="@(() => Data.Start)" />
+				}
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="mb-2">
+				<label for="endDate">End Date</label>
+				@if (!Data.IsAllDay)
+				{
+					<TelerikDateTimePicker Id="endDate" @bind-Value="Data.End" Format="MM/dd/yyyy hh:mm tt" Width="100%" />
+					<ValidationMessage For="@(() => Data.End)" />
+				}
+				else
+				{
+					<TelerikDatePicker Id="endDate" @bind-Value="Data.End" Format="MM/dd/yyyy" Width="100%" />
+					<ValidationMessage For="@(() => Data.End)" />
+				}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="eventLocation">Location</label>
+				<TelerikTextBox Id="eventLocation" @bind-Value="Data.Location" Width="100%" />
+				<ValidationMessage For="@(() => Data.Location)" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-p22">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public Event Data { get; set; }
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await EventService.CreateEvent(Data);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess("Event created", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

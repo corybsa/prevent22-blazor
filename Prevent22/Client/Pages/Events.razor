@@ -21,12 +21,12 @@
 							  AllowDelete="Services.UserService.user?.RoleId == SystemRole.Admin"
 							  @bind-View="CurrentView"
 							  IdField="@(nameof(Event.EventId))"
-							  OnCreate="@CreateEvent"
 							  OnUpdate="@UpdateEvent"
 							  OnEdit="@EditEvent"
 							  OnDelete="@DeleteEvent">
 				<SchedulerViews>
 					<SchedulerDayView />
+					<SchedulerWeekView />
 					<SchedulerMonthView />
 				</SchedulerViews>
 			</TelerikScheduler>
@@ -63,14 +63,11 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
 	}
 
-	void CreateEvent(SchedulerCreateEventArgs args)
-	{
-		Console.WriteLine("how to create???");
-	}
-
-	async Task UpdateEvent(SchedulerUpdateEventArgs args)
+	private async Task UpdateEvent(SchedulerUpdateEventArgs args)
 	{
 		Event e = args.Item as Event;
 
@@ -94,14 +91,21 @@
 		}
 	}
 
-	void EditEvent(SchedulerEditEventArgs args)
+	private void EditEvent(SchedulerEditEventArgs args)
 	{
 		Event e = args.Item as Event;
 
 		// an edit operation
 		if (!args.IsNew)
 		{
-			Flyout.Open<Event>($"Update {e.Title}", typeof(Client.Flyout.EventDetails), e);
+			Flyout.Open<Event>($"Update {e.Title}", typeof(Client.Flyout.Events.EventUpdate), e);
+			Flyout.OnSuccess = async () => await GetData();
+		}
+		else
+		{
+			// a create operation
+			e = new Event() { Start = args.Start, End = args.End };
+			Flyout.Open<Event>("Create event", typeof(Client.Flyout.Events.EventAdd), e);
 			Flyout.OnSuccess = async () => await GetData();
 		}
 
@@ -109,7 +113,7 @@
 		args.IsCancelled = true;
 	}
 
-	async Task DeleteEvent(SchedulerDeleteEventArgs args)
+	private async Task DeleteEvent(SchedulerDeleteEventArgs args)
 	{
 		Event e = args.Item as Event;
 

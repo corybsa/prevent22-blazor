@@ -28,7 +28,9 @@
 		else
 		{
 			<AuthorizeView>
-				<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateThread">Create new thread</TelerikButton>
+				<Authorized>
+					<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateThread">Create new thread</TelerikButton>
+				</Authorized>
 			</AuthorizeView>
 			<TelerikListView Data="@threads" Pageable="true">
 				<HeaderTemplate>

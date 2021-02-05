@@ -45,11 +45,15 @@
 			<li class="nav-item">
 				<NavLink class="nav-link" href="/about-us">About Us</NavLink>
 			</li>
-			<li class="nav-item">
-				<NavLink class="nav-link" href="/forum">Forum</NavLink>
-			</li>
-			<li class="nav-item">
-				<NavLink class="nav-link" href="/events">Events</NavLink>
+			<li class="nav-item dropdown @EventsDropDownClass">
+				<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showEventsDropDown" @onclick="(() => showEventsDropDown = !showEventsDropDown)">
+					Connect
+				</a>
+				<div class="dropdown-menu @EventsDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showEventsDropDown = !showEventsDropDown)">
+					<a class="dropdown-item" href="/forum">Forum</a>
+					<a class="dropdown-item" href="/events">Events</a>
+					<a class="dropdown-item" href="/volunteer">Volunteer</a>
+				</div>
 			</li>
 			<li class="nav-item dropdown @ResourcesDropDownClass">
 				<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showResourcesDropDown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
@@ -104,11 +108,13 @@
 @code {
 	private bool collapseNavMenu = true;
 	private bool showResourcesDropDown = false;
+	private bool showEventsDropDown = false;
 	private bool showSearchDropDown = false;
 	private bool showProfileDropDown = false;
 
 	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 	private string ResourcesDropDownClass => showResourcesDropDown ? "show" : null;
+	private string EventsDropDownClass => showEventsDropDown ? "show" : null;
 	private string SearchDropDownClass => showSearchDropDown ? "show" : null;
 	private string ProfileDropDownClass => showProfileDropDown ? "show" : null;
 

@@ -1,5 +1,4 @@
-﻿using Blazored.Toast.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,18 +6,34 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Telerik.Blazor.Components;
+using Telerik.DataSource;
 
 namespace Prevent22.Client.Services
 {
 	public class BaseService
 	{
 		private readonly HttpClient _http;
-		private readonly IToastService _toastService;
 
-		public BaseService(HttpClient http, IToastService toastService)
+		public BaseService(HttpClient http)
 		{
 			_http = http;
-			_toastService = toastService;
+		}
+
+		public static GridReadEventArgs GetEmptyGridArgs() {
+			var args = new GridReadEventArgs();
+			args.Request = new DataSourceRequest()
+			{
+				Page = 1,
+				PageSize = 10,
+				Skip = 0,
+				Filters = new List<IFilterDescriptor>(),
+				Groups = new List<GroupDescriptor>(),
+				Sorts = new List<SortDescriptor>(),
+				Aggregates = new List<AggregateDescriptor>()
+			};
+
+			return args;
 		}
 
 		protected async Task<T> Get<T>(string url)

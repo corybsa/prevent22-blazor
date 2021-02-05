@@ -27,7 +27,9 @@
 		else
 		{
 			<AuthorizeView Policy="@Policies.IsAdmin">
-				<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateBoard">Create new board</TelerikButton>
+				<Authorized>
+					<TelerikButton Class="mb-3 k-button-p22" @onclick="CreateBoard">Create new board</TelerikButton>
+				</Authorized>
 			</AuthorizeView>
 			<TelerikListView Data="@boards" Pageable="true">
 				<HeaderTemplate>

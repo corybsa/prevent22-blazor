@@ -1,11 +1,8 @@
-﻿using Blazored.Toast.Services;
-using Prevent22.Shared;
+﻿using Prevent22.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
@@ -15,7 +12,7 @@ namespace Prevent22.Client.Services
 	{
 		public static User user { get; set; }
 
-		public UserService(HttpClient http, IToastService toastService) : base(http, toastService) { }
+		public UserService(HttpClient http) : base(http) { }
 
 		public async Task<DbResponse<User>> GetUsers(GridReadEventArgs args)
 		{
