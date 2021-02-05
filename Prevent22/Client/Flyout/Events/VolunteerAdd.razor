@@ -1,0 +1,76 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IVolunteerService VolunteerService
+
+<EditForm Model="@volunteer" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-6">
+			<div class="mb-2">
+				<label for="firstName">FirstName</label>
+				<TelerikTextBox Id="firstName" @bind-Value="volunteer.FirstName" Width="100%" />
+				<ValidationMessage For="@(() => volunteer.FirstName)" />
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="mb-2">
+				<label for="lastName">LastName</label>
+				<TelerikTextBox Id="lastName" @bind-Value="volunteer.LastName" Width="100%" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="email">Email</label>
+				<TelerikTextBox Id="email" @bind-Value="volunteer.Email" Width="100%" />
+				<ValidationMessage For="@(() => volunteer.Email)" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-p22">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public Event Data { get; set; }
+	private VolunteerRegister volunteer = new VolunteerRegister();
+
+	protected override void OnInitialized()
+	{
+		var user = Services.UserService.user;
+		volunteer.EventId = Data.EventId;
+
+		if (user != null)
+		{
+			volunteer.UserId = user.UserId;
+			volunteer.FirstName = user.FirstName;
+			volunteer.LastName = user.LastName;
+			volunteer.Email = user.Email;
+		}
+	}
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await VolunteerService.CreateVolunteer(volunteer);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess($"Volunteered for {Data.Title}!", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

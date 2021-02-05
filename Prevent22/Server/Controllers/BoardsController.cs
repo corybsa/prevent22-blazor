@@ -88,7 +88,7 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
-		[Auth(Roles = new[] { SystemRole.Admin })]
+		[Auth(Roles = new[] { SystemRole.Admin, SystemRole.Moderator })]
 		[HttpPost]
 		public async Task<IActionResult> CreateBoard(Board board)
 		{
@@ -112,7 +112,7 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
-		[Auth(Roles = new[] { SystemRole.Admin })]
+		[Auth(Roles = new[] { SystemRole.Admin, SystemRole.Moderator })]
 		[HttpPut]
 		public async Task<IActionResult> UpdateBoard(Board board)
 		{
@@ -137,7 +137,7 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
-		[Auth(Roles = new[] { SystemRole.Admin })]
+		[Auth(Roles = new[] { SystemRole.Admin, SystemRole.Moderator })]
 		[HttpDelete("{boardId}")]
 		public async Task<IActionResult> DeleteBoard(int boardId)
 		{

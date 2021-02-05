@@ -5,7 +5,6 @@
 @inject Services.IEventService EventService
 @inject IToastService ToastService
 @using Prevent22.Shared
-@using Auth
 
 <div class="px-4 p-4">
 	<div class="container-fluid">
@@ -17,7 +16,7 @@
 		{
 			<TelerikScheduler Data="@events"
 							  AllowCreate="Services.UserService.user?.RoleId == SystemRole.Admin"
-							  AllowUpdate="Services.UserService.user?.RoleId == SystemRole.Admin"
+							  AllowUpdate="true"
 							  AllowDelete="Services.UserService.user?.RoleId == SystemRole.Admin"
 							  @bind-View="CurrentView"
 							  IdField="@(nameof(Event.EventId))"
@@ -29,6 +28,14 @@
 					<SchedulerWeekView />
 					<SchedulerMonthView />
 				</SchedulerViews>
+				<ItemTemplate>
+					@{
+						var evnt = context as Event;
+						<div title="@evnt.Start.ToShortDateString() - @evnt.Title">
+							@evnt.Title (@evnt.VolunteerCount going)
+						</div>
+					}
+				</ItemTemplate>
 			</TelerikScheduler>
 		}
 	</div>
@@ -94,16 +101,21 @@
 	private void EditEvent(SchedulerEditEventArgs args)
 	{
 		Event e = args.Item as Event;
+		var user = Services.UserService.user;
 
-		// an edit operation
-		if (!args.IsNew)
+		// user is not logged in, or is not allowed to edit
+		if (user == null || user?.RoleId == SystemRole.Admin)
+		{
+			Flyout.Open<Event>($"Volunteer for {e.Title}", typeof(Client.Flyout.Events.VolunteerAdd), e);
+			Flyout.OnSuccess = async () => await GetData();
+		}
+		else if (!args.IsNew) // an edit operation
 		{
 			Flyout.Open<Event>($"Update {e.Title}", typeof(Client.Flyout.Events.EventUpdate), e);
 			Flyout.OnSuccess = async () => await GetData();
 		}
-		else
+		else // a create operation
 		{
-			// a create operation
 			e = new Event() { Start = args.Start, End = args.End };
 			Flyout.Open<Event>("Create event", typeof(Client.Flyout.Events.EventAdd), e);
 			Flyout.OnSuccess = async () => await GetData();

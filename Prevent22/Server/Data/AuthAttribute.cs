@@ -56,7 +56,9 @@ namespace Prevent22.Server.Data
 				context.Result = new UnauthorizedResult();
 				return;
 			}
-			catch(Exception e) {
+			catch {
+				Console.WriteLine("exception");
+				context.Result = new UnauthorizedResult();
 				return;
 			}
 		}
