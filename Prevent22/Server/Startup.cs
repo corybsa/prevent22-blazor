@@ -91,7 +91,7 @@ namespace Prevent22.Server
 				"font-src 'self' data:;" +
 				"img-src 'self' data: https:;" +
 				"object-src 'none';" +
-				"script-src 'self' blob: 'sha256-9mThMC8NT3dPbcxJOtXiiwevtWTAPorqkXGKqI388cI=' 'sha256-v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA=' 'sha256-Nf/DChZ0c94B4rwuAMUxo8txJpPuJsZdlwmpQgdolC0=' 'unsafe-eval';" +
+				"script-src 'self' blob: 'sha256-9mThMC8NT3dPbcxJOtXiiwevtWTAPorqkXGKqI388cI=' 'sha256-v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA=' 'sha256-Nf/DChZ0c94B4rwuAMUxo8txJpPuJsZdlwmpQgdolC0=' 'sha256-AbpHGcgLb+kRsJGnwFEktk7uzpZOCcBY74+YBdrKVGs=' 'unsafe-eval';" +
 				"style-src 'self' 'unsafe-inline';" +
 				"connect-src 'self' ws:;" +
 				"upgrade-insecure-requests;");
