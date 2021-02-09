@@ -84,7 +84,7 @@ namespace Prevent22.Server
 
 			app.Use(async (context, next) =>
 			{
-				double hstsExpire = TimeSpan.FromDays(30).TotalSeconds;
+				double hstsExpire = TimeSpan.FromDays(730).TotalSeconds;
 				context.Response.Headers.Add("X-Frame-Options", "DENY");
 				context.Response.Headers.Add("Content-Security-Policy", "" +
 				"default-src 'self';" +
