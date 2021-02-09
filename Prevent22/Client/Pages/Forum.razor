@@ -35,41 +35,50 @@
 				<HeaderTemplate>
 					<div class="container" style="background: hsl(210, 17%, 98%);">
 						<div class="row">
-							<div class="col-6">
+							<div class="col-4 col-md-4 col-lg-5">
 								<h6 class="mt-1 mb-1">Board</h6>
 							</div>
-							<div class="col-2 text-center d-none d-sm-block">
+							<div class="col-2 text-center">
 								<h6 class="mt-1 mb-1">Threads</h6>
 							</div>
 							<div class="col-2 text-center d-none d-md-block">
 								<h6 class="mt-1 mb-1">Posts</h6>
 							</div>
-							<div class="col-6 col-sm-4 col-md-2 text-center">
+							<div class="col-4 col-md-2 text-center">
 								<h6 class="mt-1 mb-1">Last Post</h6>
+							</div>
+							<div class="col-2 col-lg-1">
+								&nbsp;
 							</div>
 						</div>
 					</div>
 				</HeaderTemplate>
 				<Template>
-					<div class="container board" @onclick="@(() => GoToThreads(context.BoardId))">
+					<div class="container board">
 						<div class="row pt-2 pb-2">
-							<div class="col-6">
-								<p class="m-0">@context.BoardName</p>
-								<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
-							</div>
-							<div class="col-2 text-center d-none d-sm-block">
-								<p class="m-0">@context.ThreadCount</p>
-							</div>
-							<div class="col-2 text-center d-none d-md-block">
-								<p class="m-0">@context.PostCount</p>
-							</div>
-							<div class="col-6 col-sm-4 col-md-2 text-center">
-								<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
+							<div style="display: contents;" @onclick="@(() => GoToThreads(context.BoardId))">
+								<div class="col-4 col-md-4 col-lg-5">
+									<p class="m-0">@context.BoardName</p>
+									<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
+								</div>
+								<div class="col-2 text-center">
+									<p class="m-0">@context.ThreadCount</p>
+								</div>
+								<div class="col-2 text-center d-none d-md-block">
+									<p class="m-0">@context.PostCount</p>
+								</div>
+								<div class="col-4 col-md-2 text-center">
+									<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
 
-								@if (context.LastPostDate != null)
-									{
-									<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
-									}
+									@if (context.LastPostDate != null)
+										{
+										<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
+										}
+								</div>
+							</div>
+							<div class="col-2 col-lg-1">
+								<button class="btn btn-info" @onclick="() => EditBoard(context)" style="font-size: 0.7rem; margin-bottom: 5px;"><i class="fa fa-pen"></i></button>
+								<button class="btn btn-danger" @onclick="() => DeleteBoard(context)"><i class="fa fa-times"></i></button>
 							</div>
 						</div>
 					</div>
@@ -106,6 +115,8 @@
 		{
 			ToastService.ShowError(e.Message);
 		}
+
+		StateHasChanged();
 	}
 
 	private void GoToThreads(int? boardId)
@@ -116,11 +127,35 @@
 	private void CreateBoard()
 	{
 		Flyout.Open("Create new board", typeof(Client.Flyout.Boards.BoardsAdd));
-		Flyout.OnSuccess = async () =>
+		Flyout.OnSuccess = async () => await GetData();
+	}
+
+	private void EditBoard(Board board)
+	{
+		Flyout.Open<Board>($"Edit {board.BoardName}", typeof(Client.Flyout.Boards.BoardsUpdate), board);
+		Flyout.OnSuccess = async () => await GetData();
+	}
+
+	private async Task DeleteBoard(Board board)
+	{
+		try
 		{
-			await GetData();
-			StateHasChanged();
-		};
+			var res = await BoardService.DeleteBoard(board.BoardId);
+
+			if (res.Success)
+			{
+				boards = res.Data;
+				ToastService.ShowSuccess("Board deleted", "Success");
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message);
+		}
 	}
 
 	public void Dispose()
