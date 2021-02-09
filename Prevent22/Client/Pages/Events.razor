@@ -5,6 +5,7 @@
 @inject Services.IEventService EventService
 @inject IToastService ToastService
 @using Prevent22.Shared
+@using Auth
 
 <div class="px-4 p-4">
 	<div class="container-fluid">
@@ -14,7 +15,17 @@
 		}
 		else
 		{
+			@if (IsMobile)
+			{
+				<AuthorizeView Policy="@Policies.IsAdmin">
+					<div style="height: 45px;">
+						<button id="mobile-create-event" class="btn btn-danger" type="button" style="float: right;" @onclick="() => MobileEditEvent(true, null)">Create event</button>
+					</div>
+				</AuthorizeView>
+			}
+
 			<TelerikScheduler Data="@events"
+							  @ref="calendar"
 							  AllowCreate="Services.UserService.user?.RoleId == SystemRole.Admin"
 							  AllowUpdate="true"
 							  AllowDelete="Services.UserService.user?.RoleId == SystemRole.Admin"
@@ -28,10 +39,18 @@
 					<SchedulerWeekView />
 					<SchedulerMonthView />
 				</SchedulerViews>
+				<AllDayItemTemplate>
+					@{
+							var evnt = context as Event;
+						<div title="@evnt.Start.ToShortDateString() - @evnt.Title" style="height: 100%;" @onclick="() => MobileEditEvent(false, evnt)">
+							@evnt.Title (@evnt.VolunteerCount going)
+						</div>
+					}
+				</AllDayItemTemplate>
 				<ItemTemplate>
 					@{
-						var evnt = context as Event;
-						<div title="@evnt.Start.ToShortDateString() - @evnt.Title">
+							var evnt = context as Event;
+						<div title="@evnt.Start.ToShortDateString() - @evnt.Title" style="height: 100%;" @onclick="() => MobileEditEvent(false, evnt)">
 							@evnt.Title (@evnt.VolunteerCount going)
 						</div>
 					}
@@ -44,6 +63,8 @@
 @code {
 	public List<Event> events;
 	public SchedulerView CurrentView { get; set; } = SchedulerView.Month;
+	private TelerikScheduler<Event> calendar;
+	private bool IsMobile = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -104,7 +125,7 @@
 		var user = Services.UserService.user;
 
 		// user is not logged in, or is not allowed to edit
-		if (user == null || user?.RoleId == SystemRole.Admin)
+		if (user == null || user?.RoleId != SystemRole.Admin)
 		{
 			Flyout.Open<Event>($"Volunteer for {e.Title}", typeof(Client.Flyout.Events.VolunteerAdd), e);
 			Flyout.OnSuccess = async () => await GetData();
@@ -149,6 +170,24 @@
 		}
 	}
 
+	private void MobileEditEvent(bool isNew, Event evnt)
+	{
+		if (evnt == null)
+		{
+			evnt = new Event();
+		}
+
+		var args = new SchedulerEditEventArgs()
+		{
+			Item = evnt,
+			IsNew = isNew,
+			Start = calendar.Date,
+			End = calendar.Date.AddMinutes(30)
+		};
+
+		EditEvent(args);
+	}
+
 	private async Task CheckMobile()
 	{
 		int windowWidth = await BrowserService.GetWidth();
@@ -156,10 +195,12 @@
 		if (windowWidth < 768)
 		{
 			CurrentView = SchedulerView.Day;
+			IsMobile = true;
 		}
 		else
 		{
 			CurrentView = SchedulerView.Month;
+			IsMobile = false;
 		}
 	}
 
