@@ -19,8 +19,13 @@
 	}
 
 	div.thread.closed {
-		pointer-events: none;
 		color: hsl(0, 0%, 70%);
+		cursor: default;
+		background: initial !important;
+	}
+
+	div.thread.closed .thread-info {
+		pointer-events: none;
 	}
 
 	div.thread.closed .fa-lock {
@@ -63,7 +68,7 @@
 				<Template>
 					<div class="container thread @(context.IsClosed ? "closed" : null)">
 						<div class="row pt-2 pb-2">
-							<div style="display: contents;" @onclick="@(() => GoToPosts(context.ThreadId))">
+							<div class="thread-info" style="display: contents;" @onclick="@(() => GoToPosts(context))">
 								<div class="col-5 col-md-4">
 									<p class="m-0">@context.ThreadName <i class="fa fa-lock" style="display: none;"></i></p>
 									<p class="m-0" style="font-size: 0.9rem;">@context.ThreadName</p>
@@ -97,8 +102,8 @@
 </div>
 
 @code {
-	[Parameter]
-	public int boardId { get; set; }
+		[Parameter]
+		public int boardId { get; set; }
 
 	private List<Thread> threads;
 
@@ -130,9 +135,12 @@
 		StateHasChanged();
 	}
 
-	private void GoToPosts(int? threadId)
+	private void GoToPosts(Thread thread)
 	{
-		NavigationManager.NavigateTo($"/forum/{boardId}/thread/{threadId}/posts");
+		if (!thread.IsClosed)
+		{
+			NavigationManager.NavigateTo($"/forum/{boardId}/thread/{thread.ThreadId}/posts");
+		}
 	}
 
 	private void CreateThread()
