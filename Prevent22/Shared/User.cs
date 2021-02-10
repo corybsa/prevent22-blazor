@@ -37,7 +37,7 @@ namespace Prevent22.Shared
 		public string Phone { get; set; }
 		public bool IsBanned { get; set; }
 		public DateTime? BannedUntil { get; set; }
-		public int BannedById { get; set; }
+		public int? BannedById { get; set; }
 		public string BannedByUsername { get; set; }
 	}
 }

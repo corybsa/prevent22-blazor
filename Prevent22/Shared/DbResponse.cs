@@ -11,5 +11,6 @@ namespace Prevent22.Shared
 		public List<T> Data { get; set; }
 		public int DataTotalCount { get; set; }
 		public string Info { get; set; }
+		public byte SqlState { get; set; }
 	}
 }

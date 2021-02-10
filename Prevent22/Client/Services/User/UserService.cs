@@ -16,17 +16,17 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<User>> GetUsers(GridReadEventArgs args)
 		{
-			return await Post<DbResponse<User>>("api/users", args);
+			return await Post<User>("api/users", args);
 		}
 
 		public async Task<DbResponse<User>> GetUser(int userId)
 		{
-			return await Get<DbResponse<User>>($"api/test/user/{userId}");
+			return await Get<User>($"api/test/user/{userId}");
 		}
 
 		public async Task<DbResponse<User>> UpdateUser(User user)
 		{
-			return await Post<DbResponse<User>>("api/users/update", user);
+			return await Post<User>("api/users/update", user);
 		}
 	}
 }

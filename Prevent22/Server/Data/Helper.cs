@@ -29,7 +29,6 @@ namespace Prevent22.Server
 		{
 			var response = new DbResponse<T>();
 
-
 			if (_sql == null)
 			{
 				response.Success = false;
@@ -47,34 +46,31 @@ namespace Prevent22.Server
 
 				try
 				{
+					Console.WriteLine(GetStatement(proc, parameters, null));
+
 					// execute stored procedure
 					response.Success = true;
 					response.Data = (await conn.QueryAsync<T>(proc, parameters, commandType: CommandType.StoredProcedure)).ToList();
 					response.DataTotalCount = response.Data.Count;
-					Console.WriteLine(GetStatement(proc, parameters, null));
 				}
 				catch (SqlException e)
 				{
 					// get exec
 					string exec = GetStatement(proc, parameters, e);
 					response.Success = false;
-					response.Info = exec;
+					response.Info = e.Message;
+					response.SqlState = e.State;
 
-					// constraint error
-					if (e.Number == 547)
-					{
-						Console.WriteLine(response.Info);
-						throw new Exception("There are items associated with this record. The action can't be performed.");
-					}
+					CheckErrors(e);
 
-					throw new Exception(e.Message);
+					throw new ApiException<T>(e.Message, response);
 				}
 				catch (Exception e)
 				{
 					response.Success = false;
 					response.Info = $"Unknown error: {e.Message}";
 
-					throw new Exception(response.Info);
+					throw new ApiException<T>(response.Info, response);
 				}
 				finally
 				{
@@ -87,6 +83,27 @@ namespace Prevent22.Server
 			}
 
 			return response;
+		}
+
+		private void CheckErrors(SqlException e)
+		{
+			// constraint error
+			if (e.Number == 547)
+			{
+				throw new Exception("There are items associated with this record. The action can't be performed.");
+			}
+
+			CheckSqlState(e.State);
+		}
+
+		private void CheckSqlState(byte state)
+		{
+			switch (state)
+			{
+				case SqlState.UserIsBanned:
+					Client.Services.UserService.user = null;
+					break;
+			}
 		}
 
 		private string GetStatement(string proc, DynamicParameters parameters, SqlException e = null)

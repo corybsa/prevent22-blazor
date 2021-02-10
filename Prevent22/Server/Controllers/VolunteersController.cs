@@ -24,7 +24,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateVolunteer(VolunteerRegister volunteer)
 		{
-			var response = new DbResponse<Event>();
+			DbResponse<Event> response;
 
 			try
 			{
@@ -41,10 +41,9 @@ namespace Prevent22.Server.Controllers
 
 				// TODO: Email code to person
 			}
-			catch (Exception e)
+			catch (ApiException<Event> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 

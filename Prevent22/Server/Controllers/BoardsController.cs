@@ -24,7 +24,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetBoards()
 		{
-			var response = new DbResponse<Board>();
+			DbResponse<Board> response;
 
 			try
 			{
@@ -32,10 +32,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("StatementType", StatementType.Get);
 				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Board> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -46,7 +45,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet("{boardId}")]
 		public async Task<IActionResult> GetBoard(int boardId)
 		{
-			var response = new DbResponse<Board>();
+			DbResponse<Board> response;
 
 			try
 			{
@@ -55,10 +54,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("BoardId", boardId);
 				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Board> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -69,7 +67,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet("{boardId}/threads")]
 		public async Task<IActionResult> GetThread(int boardId)
 		{
-			var response = new DbResponse<Thread>();
+			DbResponse<Thread> response;
 
 			try
 			{
@@ -78,10 +76,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("BoardId", boardId);
 				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Thread> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -92,7 +89,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateBoard(Board board)
 		{
-			var response = new DbResponse<Board>();
+			DbResponse<Board> response;
 
 			try
 			{
@@ -102,10 +99,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("BoardDescription", board.BoardDescription);
 				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Board> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -116,7 +112,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPut]
 		public async Task<IActionResult> UpdateBoard(Board board)
 		{
-			var response = new DbResponse<Board>();
+			DbResponse<Board> response;
 
 			try
 			{
@@ -127,10 +123,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("BoardDescription", board.BoardDescription);
 				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Board> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -141,7 +136,7 @@ namespace Prevent22.Server.Controllers
 		[HttpDelete("{boardId}")]
 		public async Task<IActionResult> DeleteBoard(int boardId)
 		{
-			var response = new DbResponse<Board>();
+			DbResponse<Board> response;
 
 			try
 			{
@@ -150,10 +145,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("BoardId", boardId);
 				response = await _helper.ExecStoredProcedure<Board>("sp_Boards", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Board> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 

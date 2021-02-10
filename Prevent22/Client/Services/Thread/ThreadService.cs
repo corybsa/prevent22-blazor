@@ -13,32 +13,32 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<Thread>> GetThreads()
 		{
-			return await Get<DbResponse<Thread>>("api/threads");
+			return await Get<Thread>("api/threads");
 		}
 
 		public async Task<DbResponse<Thread>> GetThread(int threadId)
 		{
-			return await Get<DbResponse<Thread>>($"api/threads/{threadId}");
+			return await Get<Thread>($"api/threads/{threadId}");
 		}
 
 		public async Task<DbResponse<Post>> GetThreadPosts(int threadId)
 		{
-			return await Get<DbResponse<Post>>($"api/threads/{threadId}/posts");
+			return await Get<Post>($"api/threads/{threadId}/posts");
 		}
 
 		public async Task<DbResponse<Thread>> CreateThread(Thread thread)
 		{
-			return await Post<DbResponse<Thread>>("api/threads", thread);
+			return await Post<Thread>("api/threads", thread);
 		}
 
 		public async Task<DbResponse<Thread>> UpdateThread(Thread thread)
 		{
-			return await Put<DbResponse<Thread>>("api/threads", thread);
+			return await Put<Thread>("api/threads", thread);
 		}
 
 		public async Task<DbResponse<Thread>> DeleteThread(int? threadId)
 		{
-			return await Delete<DbResponse<Thread>>($"api/threads/{threadId}");
+			return await Delete<Thread>($"api/threads/{threadId}");
 		}
 	}
 }

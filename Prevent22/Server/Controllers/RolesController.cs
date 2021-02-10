@@ -25,7 +25,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetRoles()
 		{
-			var response = new DbResponse<SystemRole>();
+			DbResponse<SystemRole> response;
 
 			try
 			{
@@ -33,10 +33,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("StatementType", StatementType.Get);
 				response = await _helper.ExecStoredProcedure<SystemRole>("sp_Roles", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<SystemRole> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 

@@ -13,7 +13,7 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<SystemRole>> GetRoles()
 		{
-			return await Get<DbResponse<SystemRole>>("api/roles");
+			return await Get<SystemRole>("api/roles");
 		}
 	}
 }

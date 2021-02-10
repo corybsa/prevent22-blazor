@@ -69,6 +69,7 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("Phone", user.Phone);
 				parameters.Add("IsBanned", user.IsBanned);
 				parameters.Add("BannedUntil", user.BannedUntil);
+				parameters.Add("BannedById", user.BannedById);
 
 				response = await _helper.ExecStoredProcedure<User>("sp_Users", parameters);
 			} catch(Exception e)

@@ -23,7 +23,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetEvents()
 		{
-			var response = new DbResponse<Event>();
+			DbResponse<Event> response;
 
 			try
 			{
@@ -31,10 +31,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("StatementType", StatementType.Get);
 				response = await _helper.ExecStoredProcedure<Event>("sp_Events", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Event> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -45,7 +44,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateEvents(Event e)
 		{
-			var response = new DbResponse<Event>();
+			DbResponse<Event> response;
 
 			try
 			{
@@ -60,10 +59,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("RecurrenceRule", e.RecurrenceRule);
 				response = await _helper.ExecStoredProcedure<Event>("sp_Events", parameters);
 			}
-			catch (Exception ex)
+			catch (ApiException<Event> ex)
 			{
-				response.Success = false;
-				response.Info = ex.Message;
+				response = ex.Response;
 				return BadRequest(response);
 			}
 
@@ -74,7 +72,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPut]
 		public async Task<IActionResult> UpdateEvents(Event e)
 		{
-			var response = new DbResponse<Event>();
+			DbResponse<Event> response;
 
 			try
 			{
@@ -90,10 +88,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("RecurrenceRule", e.RecurrenceRule);
 				response = await _helper.ExecStoredProcedure<Event>("sp_Events", parameters);
 			}
-			catch (Exception ex)
+			catch (ApiException<Event> ex)
 			{
-				response.Success = false;
-				response.Info = ex.Message;
+				response = ex.Response;
 				return BadRequest(response);
 			}
 
@@ -104,7 +101,7 @@ namespace Prevent22.Server.Controllers
 		[HttpDelete("{eventId}")]
 		public async Task<IActionResult> UpdateEvents(int eventId)
 		{
-			var response = new DbResponse<Event>();
+			DbResponse<Event> response;
 
 			try
 			{
@@ -113,10 +110,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("EventId", eventId);
 				response = await _helper.ExecStoredProcedure<Event>("sp_Events", parameters);
 			}
-			catch (Exception ex)
+			catch (ApiException<Event> e)
 			{
-				response.Success = false;
-				response.Info = ex.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 

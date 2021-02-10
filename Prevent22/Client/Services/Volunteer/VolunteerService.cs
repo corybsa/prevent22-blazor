@@ -13,7 +13,7 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<Volunteer>> CreateVolunteer(VolunteerRegister volunteer)
 		{
-			return await Post<DbResponse<Volunteer>>("api/volunteers", volunteer);
+			return await Post<Volunteer>("api/volunteers", volunteer);
 		}
 	}
 }

@@ -150,6 +150,16 @@
 	{
 		try
 		{
+			if (Data.IsBanned)
+			{
+				Data.BannedById = Services.UserService.user.UserId;
+			}
+			else
+			{
+				Data.BannedUntil = null;
+				Data.BannedById = null;
+			}
+
 			var res = await UserService.UpdateUser(Data);
 
 			if (!res.Success)

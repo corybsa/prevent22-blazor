@@ -13,32 +13,32 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<Board>> GetBoards()
 		{
-			return await Get<DbResponse<Board>>("api/boards");
+			return await Get<Board>("api/boards");
 		}
 
 		public async Task<DbResponse<Board>> GetBoard(int boardId)
 		{
-			return await Get<DbResponse<Board>>($"api/boards/{boardId}");
+			return await Get<Board>($"api/boards/{boardId}");
 		}
 
 		public async Task<DbResponse<Thread>> GetBoardThreads(int boardId)
 		{
-			return await Get<DbResponse<Thread>>($"api/boards/{boardId}/threads");
+			return await Get<Thread>($"api/boards/{boardId}/threads");
 		}
 
 		public async Task<DbResponse<Board>> CreateBoard(Board board)
 		{
-			return await Post<DbResponse<Board>>("api/boards", board);
+			return await Post<Board>("api/boards", board);
 		}
 
 		public async Task<DbResponse<Board>> UpdateBoard(Board board)
 		{
-			return await Put<DbResponse<Board>>("api/boards", board);
+			return await Put<Board>("api/boards", board);
 		}
 
 		public async Task<DbResponse<Board>> DeleteBoard(int boardId)
 		{
-			return await Delete<DbResponse<Board>>($"api/boards/{boardId}");
+			return await Delete<Board>($"api/boards/{boardId}");
 		}
 	}
 }

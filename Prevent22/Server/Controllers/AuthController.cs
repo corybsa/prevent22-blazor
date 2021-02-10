@@ -98,10 +98,9 @@ namespace Prevent22.Server.Controllers
 				response.Data = user;
 				Client.Services.UserService.user = user.First();
 			}
-			catch (Exception e)
+			catch (ApiException<User> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return StatusCode(StatusCodes.Status500InternalServerError, response);
 			}
 

@@ -24,7 +24,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetPosts()
 		{
-			var response = new DbResponse<Post>();
+			DbResponse<Post> response;
 
 			try
 			{
@@ -32,10 +32,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("StatementType", StatementType.Get);
 				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Post> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -46,7 +45,7 @@ namespace Prevent22.Server.Controllers
 		[HttpGet("{postId}")]
 		public async Task<IActionResult> GetPost(int postId)
 		{
-			var response = new DbResponse<Post>();
+			DbResponse<Post> response;
 
 			try
 			{
@@ -55,10 +54,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("PostId", postId);
 				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Post> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -68,7 +66,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreatePost(Post post)
 		{
-			var response = new DbResponse<Post>();
+			DbResponse<Post> response;
 
 			try
 			{
@@ -79,10 +77,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("ThreadId", post.ThreadId);
 				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Post> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -92,7 +89,7 @@ namespace Prevent22.Server.Controllers
 		[HttpPut]
 		public async Task<IActionResult> UpdatePost(Post post)
 		{
-			var response = new DbResponse<Post>();
+			DbResponse<Post> response;
 
 			try
 			{
@@ -105,10 +102,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("ThreadId", post.ThreadId);
 				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Post> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 
@@ -119,7 +115,7 @@ namespace Prevent22.Server.Controllers
 		[HttpDelete("{postId}")]
 		public async Task<IActionResult> DeletePost(Post post)
 		{
-			var response = new DbResponse<Post>();
+			DbResponse<Post> response;
 
 			try
 			{
@@ -128,10 +124,9 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("PostId", post.PostId);
 				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
 			}
-			catch (Exception e)
+			catch (ApiException<Post> e)
 			{
-				response.Success = false;
-				response.Info = e.Message;
+				response = e.Response;
 				return BadRequest(response);
 			}
 

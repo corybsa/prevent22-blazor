@@ -13,27 +13,27 @@ namespace Prevent22.Client.Services
 
 		public async Task<DbResponse<Post>> GetPosts()
 		{
-			return await Get<DbResponse<Post>>("api/posts");
+			return await Get<Post>("api/posts");
 		}
 
 		public async Task<DbResponse<Post>> GetPost(int postId)
 		{
-			return await Get<DbResponse<Post>>($"api/posts/{postId}");
+			return await Get<Post>($"api/posts/{postId}");
 		}
 
 		public async Task<DbResponse<Post>> CreatePost(Post post)
 		{
-			return await Post<DbResponse<Post>>("api/posts/", post);
+			return await Post<Post>("api/posts/", post);
 		}
 
 		public async Task<DbResponse<Post>> UpdatePost(Post post)
 		{
-			return await Put<DbResponse<Post>>("api/posts/", post);
+			return await Put<Post>("api/posts/", post);
 		}
 
 		public async Task<DbResponse<Post>> DeletePost(int postId)
 		{
-			return await Delete<DbResponse<Post>>($"api/posts/{postId}");
+			return await Delete<Post>($"api/posts/{postId}");
 		}
 	}
 }

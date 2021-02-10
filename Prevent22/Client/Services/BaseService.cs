@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prevent22.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -20,7 +21,8 @@ namespace Prevent22.Client.Services
 			_http = http;
 		}
 
-		public static GridReadEventArgs GetEmptyGridArgs() {
+		public static GridReadEventArgs GetEmptyGridArgs()
+		{
 			var args = new GridReadEventArgs();
 			args.Request = new DataSourceRequest()
 			{
@@ -36,13 +38,15 @@ namespace Prevent22.Client.Services
 			return args;
 		}
 
-		protected async Task<T> Get<T>(string url)
+		protected async Task<DbResponse<T>> Get<T>(string url)
 		{
 			try
 			{
 				var res = await _http.GetAsync(url);
 				CheckStatus(url, res.StatusCode);
-				return await res.Content.ReadFromJsonAsync<T>();
+				var content = await res.Content.ReadFromJsonAsync<DbResponse<T>>();
+				CheckSqlState(content.SqlState);
+				return content;
 			}
 			catch (JsonException)
 			{
@@ -50,13 +54,15 @@ namespace Prevent22.Client.Services
 			}
 		}
 
-		protected async Task<T> Post<T>(string url, object data)
+		protected async Task<DbResponse<T>> Post<T>(string url, object data)
 		{
 			try
 			{
 				var res = await _http.PostAsJsonAsync(url, data);
 				CheckStatus(url, res.StatusCode);
-				return await res.Content.ReadFromJsonAsync<T>();
+				var content = await res.Content.ReadFromJsonAsync<DbResponse<T>>();
+				CheckSqlState(content.SqlState);
+				return content;
 			}
 			catch (JsonException)
 			{
@@ -64,13 +70,15 @@ namespace Prevent22.Client.Services
 			}
 		}
 
-		protected async Task<T> Put<T>(string url, object data)
+		protected async Task<DbResponse<T>> Put<T>(string url, object data)
 		{
 			try
 			{
 				var res = await _http.PutAsJsonAsync(url, data);
 				CheckStatus(url, res.StatusCode);
-				return await res.Content.ReadFromJsonAsync<T>();
+				var content = await res.Content.ReadFromJsonAsync<DbResponse<T>>();
+				CheckSqlState(content.SqlState);
+				return content;
 			}
 			catch (JsonException)
 			{
@@ -78,13 +86,15 @@ namespace Prevent22.Client.Services
 			}
 		}
 
-		protected async Task<T> Delete<T>(string url)
+		protected async Task<DbResponse<T>> Delete<T>(string url)
 		{
 			try
 			{
 				var res = await _http.DeleteAsync(url);
 				CheckStatus(url, res.StatusCode);
-				return await res.Content.ReadFromJsonAsync<T>();
+				var content = await res.Content.ReadFromJsonAsync<DbResponse<T>>();
+				CheckSqlState(content.SqlState);
+				return content;
 			}
 			catch (JsonException)
 			{
@@ -92,13 +102,26 @@ namespace Prevent22.Client.Services
 			}
 		}
 
-		private void CheckStatus(string url, HttpStatusCode code) {
+		private void CheckStatus(string url, HttpStatusCode code)
+		{
 			switch (code)
 			{
 				case HttpStatusCode.NotFound:
 					throw new Exception($"API not found: {url}");
 				case HttpStatusCode.Unauthorized:
 					throw new Exception("Not authorized to perform this action.");
+			}
+		}
+
+		private void CheckSqlState(byte state)
+		{
+			Console.WriteLine(state);
+
+			switch (state)
+			{
+				case SqlState.UserIsBanned:
+					Console.WriteLine("log out");
+					break;
 			}
 		}
 	}
