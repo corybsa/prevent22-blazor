@@ -10,7 +10,7 @@
 <style>
 	div.board:hover {
 		cursor: pointer;
-		background: lightgrey;
+		background: lightgrey !important;
 	}
 
 	div.board:nth-child(2n) {
@@ -77,8 +77,12 @@
 								</div>
 							</div>
 							<div class="col-2 col-lg-1">
-								<button class="btn btn-info" @onclick="() => EditBoard(context)" style="font-size: 0.7rem; margin-bottom: 5px;"><i class="fa fa-pen"></i></button>
-								<button class="btn btn-danger" @onclick="() => DeleteBoard(context)"><i class="fa fa-times"></i></button>
+								<AuthorizeView Policy="@Policies.IsAdmin" Context="actionsContext">
+									<Authorized>
+										<button class="btn btn-info" @onclick="() => EditBoard(context)" style="font-size: 0.7rem; margin-bottom: 5px;"><i class="fa fa-pen"></i></button>
+										<button class="btn btn-danger" @onclick="() => DeleteBoard(context)"><i class="fa fa-times"></i></button>
+									</Authorized>
+								</AuthorizeView>
 							</div>
 						</div>
 					</div>
@@ -113,7 +117,7 @@
 		}
 		catch (Exception e)
 		{
-			ToastService.ShowError(e.Message);
+			ToastService.ShowError(e.Message, "Error");
 		}
 
 		StateHasChanged();
@@ -154,7 +158,7 @@
 		}
 		catch (Exception e)
 		{
-			ToastService.ShowError(e.Message);
+			ToastService.ShowError(e.Message, "Error");
 		}
 	}
 

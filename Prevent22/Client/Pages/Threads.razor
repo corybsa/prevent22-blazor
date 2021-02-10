@@ -11,11 +11,20 @@
 <style>
 	div.thread:hover {
 		cursor: pointer;
-		background: lightgrey;
+		background: lightgrey !important;
 	}
 
 	div.thread:nth-child(2n) {
 		background: hsl(0, 0%, 95%);
+	}
+
+	div.thread.closed {
+		pointer-events: none;
+		color: hsl(0, 0%, 70%);
+	}
+
+	div.thread.closed .fa-lock {
+		display: inline !important;
 	}
 </style>
 
@@ -36,35 +45,48 @@
 				<HeaderTemplate>
 					<div class="container" style="background: hsl(210, 17%, 98%);">
 						<div class="row">
-							<div class="col-6">
+							<div class="col-5 col-md-4">
 								<h6 class="mt-1 mb-1">Thread</h6>
 							</div>
-							<div class="col-2 text-center d-none d-sm-block">
+							<div class="col-2 text-center d-none d-md-block">
 								<h6 class="mt-1 mb-1">Posts</h6>
 							</div>
-							<div class="col-6 col-sm-4 text-center">
+							<div class="col-5 col-md-4 text-center">
 								<h6 class="mt-1 mb-1">Last Post</h6>
+							</div>
+							<div class="col-2 col-lg-2">
+								&nbsp;
 							</div>
 						</div>
 					</div>
 				</HeaderTemplate>
 				<Template>
-					<div class="container thread" @onclick="@(() => GoToPosts(context.ThreadId))">
+					<div class="container thread @(context.IsClosed ? "closed" : null)">
 						<div class="row pt-2 pb-2">
-							<div class="col-6">
-								<p class="m-0">@context.ThreadName</p>
-								<p class="m-0" style="font-size: 0.9rem;">@context.ThreadName</p>
-							</div>
-							<div class="col-2 text-center d-none d-md-block">
-								<p class="m-0">@context.PostCount</p>
-							</div>
-							<div class="col-6 col-sm-4 text-center">
-								<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
+							<div style="display: contents;" @onclick="@(() => GoToPosts(context.ThreadId))">
+								<div class="col-5 col-md-4">
+									<p class="m-0">@context.ThreadName <i class="fa fa-lock" style="display: none;"></i></p>
+									<p class="m-0" style="font-size: 0.9rem;">@context.ThreadName</p>
+								</div>
+								<div class="col-2 text-center d-none d-md-block">
+									<p class="m-0">@context.PostCount</p>
+								</div>
+								<div class="col-5 col-md-4 text-center">
+									<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
 
-								@if (context.LastPostDate != null && !string.IsNullOrEmpty(context.LastPostAuthor))
-									{
-									<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
-									}
+									@if (context.LastPostDate != null && !string.IsNullOrEmpty(context.LastPostAuthor))
+										{
+										<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
+										}
+								</div>
+							</div>
+							<div class="col-2 col-lg-2">
+								<AuthorizeView Policy="@Policies.IsAdmin" Context="actionsContext">
+									<Authorized>
+										<button class="btn btn-info" @onclick="() => EditThread(context)" style="font-size: 0.7rem; margin-bottom: 5px;"><i class="fa fa-pen"></i></button>
+										<button class="btn btn-danger" @onclick="() => DeleteThread(context)"><i class="fa fa-times"></i></button>
+									</Authorized>
+								</AuthorizeView>
 							</div>
 						</div>
 					</div>
@@ -102,8 +124,10 @@
 		}
 		catch (Exception e)
 		{
-			ToastService.ShowError(e.Message);
+			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
 	}
 
 	private void GoToPosts(int? threadId)
@@ -114,11 +138,36 @@
 	private void CreateThread()
 	{
 		Flyout.Open<int>("Create new thread", typeof(Client.Flyout.Threads.ThreadsAdd), boardId);
-		Flyout.OnSuccess = async () =>
+		Flyout.OnSuccess = async () => await GetData();
+	}
+
+	private void EditThread(Thread thread)
+	{
+
+		Flyout.Open<Thread>($"Edit {thread.ThreadName}", typeof(Client.Flyout.Threads.ThreadsUpdate), thread);
+		Flyout.OnSuccess = async () => await GetData();
+	}
+
+	private async Task DeleteThread(Thread thread)
+	{
+		try
 		{
-			await GetData();
-			StateHasChanged();
-		};
+			var res = await ThreadService.DeleteThread(thread.ThreadId);
+
+			if (res.Success)
+			{
+				threads = res.Data;
+				ToastService.ShowSuccess("Thread deleted", "Success");
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
 	}
 
 	public void Dispose()

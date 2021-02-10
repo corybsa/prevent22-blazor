@@ -14,6 +14,7 @@ namespace Prevent22.Shared
 		public int? CreatedBy { get; set; }
 		public DateTime? CreatedDate { get; set; }
 		public DateTime? LastPostDate { get; set; }
+		public bool IsClosed { get; set; }
 		public string Author { get; set; }
 		public string LastPostAuthor { get; set; }
 		public int? PostCount { get; set; }
