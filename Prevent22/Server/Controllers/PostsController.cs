@@ -113,7 +113,7 @@ namespace Prevent22.Server.Controllers
 
 		[Auth(Roles = new[] { SystemRole.Admin, SystemRole.Moderator })]
 		[HttpDelete("{postId}")]
-		public async Task<IActionResult> DeletePost(Post post)
+		public async Task<IActionResult> DeletePost(int postId)
 		{
 			DbResponse<Post> response;
 
@@ -121,7 +121,7 @@ namespace Prevent22.Server.Controllers
 			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Delete);
-				parameters.Add("PostId", post.PostId);
+				parameters.Add("PostId", postId);
 				response = await _helper.ExecStoredProcedure<Post>("sp_Posts", parameters);
 			}
 			catch (ApiException<Post> e)

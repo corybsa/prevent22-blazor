@@ -28,7 +28,6 @@ namespace Prevent22.Server.Data
 				}
 
 				var user = Client.Services.UserService.user;
-				Console.WriteLine(user.UserId);
 
 				// wait for user data
 				while (user == null)
@@ -57,7 +56,6 @@ namespace Prevent22.Server.Data
 				return;
 			}
 			catch {
-				Console.WriteLine("exception");
 				context.Result = new UnauthorizedResult();
 				return;
 			}

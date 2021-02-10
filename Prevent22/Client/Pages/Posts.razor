@@ -14,11 +14,20 @@
 		background: hsl(0, 0%, 95%);
 	}
 
-	.post-author {
-	}
-
 	.post-content > p > p:last-child {
 		margin: 0;
+	}
+
+	.post-action-delete {
+		cursor: pointer;
+		color: red;
+		margin-left: 10px;
+	}
+
+	.post-action-edit {
+		cursor: pointer;
+		color: hsl(188, 78%, 41%);
+		font-size: 0.9rem;
 	}
 
 	@@media (max-width: 576px) {
@@ -63,6 +72,17 @@
 							<div class="col-12 col-sm-2 post-author">
 								<p class="m-0">@context.Author</p>
 								<p class="m-0" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
+
+								<AuthorizeView Policy="@Policies.IsModerator" Context="postActionsContext">
+									<Authorized>
+										<span @onclick="() => EditPost(context)">
+											<i class="fa fa-pen post-action-edit" title="Edit post"></i>
+										</span>
+										<span @onclick="() => DeletePost(context)">
+											<i class="fa fa-times post-action-delete" title="Delete post"></i>
+										</span>
+									</Authorized>
+								</AuthorizeView>
 							</div>
 							<div class="col-12 col-sm-10 post-content">
 								<p class="m-0">@((MarkupString)(context.Message))</p>
@@ -133,6 +153,8 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
 	}
 
 	private async Task GetThread()
@@ -154,6 +176,8 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
 	}
 
 	private async Task CreatePost()
@@ -181,8 +205,38 @@
 		}
 	}
 
+	private void EditPost(Post post)
+	{
+		Flyout.Open<Post>($"Edit Post #{post.PostId}", typeof(Client.Flyout.Posts.PostsUpdate), post);
+		Flyout.OnSuccess = async () => await GetData();
+	}
+
+	private async Task DeletePost(Post post)
+	{
+		try
+		{
+			var res = await PostService.DeletePost(post.PostId);
+
+			if (res.Success)
+			{
+				posts = res.Data;
+				ToastService.ShowSuccess("Post deleted", "Success");
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+
+		StateHasChanged();
+	}
+
 	public void Dispose()
 	{
-
+		Flyout.OnSuccess = null;
 	}
 }

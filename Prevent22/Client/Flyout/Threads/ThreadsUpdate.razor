@@ -1,0 +1,57 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IThreadService ThreadService
+
+<style>
+	.k-textarea {
+		width: 100%;
+		display: block;
+	}
+</style>
+
+<EditForm Model="@Data" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="threadName">Title</label>
+				<TelerikTextBox Id="threadName" @bind-Value="Data.ThreadName" Width="100%" />
+				<ValidationMessage For="@(() => Data.ThreadName)" />
+			</div>
+		</div>
+	</div>
+	<div class="mb-2 form-check">
+		<TelerikCheckBox Id="isClosed" @bind-Value="@Data.IsClosed" />
+		<label for="isClosed">Close thread</label>
+	</div>
+	<button type="submit" class="btn btn-p22">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public Thread Data { get; set; }
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await ThreadService.UpdateThread(Data);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess("Thread updated", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

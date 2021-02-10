@@ -1,0 +1,53 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IPostService PostService
+
+<style>
+	.k-textarea {
+		width: 100%;
+		display: block;
+	}
+</style>
+
+<EditForm Model="@Data" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="postMessage">Message</label>
+				<TelerikEditor Id="postMessage" @bind-Value="Data.Message" Width="100%" Height="400px"></TelerikEditor>
+				<ValidationMessage For="@(() => Data.Message)" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-p22">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public Post Data { get; set; }
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await PostService.UpdatePost(Data);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess("Post updated", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}
