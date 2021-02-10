@@ -1,7 +1,6 @@
-﻿using Prevent22.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
+using Prevent22.Shared;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
@@ -12,7 +11,7 @@ namespace Prevent22.Client.Services
 	{
 		public static User user { get; set; }
 
-		public UserService(HttpClient http) : base(http) { }
+		public UserService(HttpClient http, NavigationManager nav, ILocalStorageService localStorage) : base(http, nav, localStorage) { }
 
 		public async Task<DbResponse<User>> GetUsers(GridReadEventArgs args)
 		{

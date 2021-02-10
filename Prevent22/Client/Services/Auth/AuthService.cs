@@ -1,8 +1,10 @@
 using Blazored.LocalStorage;
+using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Prevent22.Shared;
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -15,12 +17,14 @@ namespace Prevent22.Client.Services
 		private readonly HttpClient _http;
 		private readonly NavigationManager _nav;
 		private readonly ILocalStorageService _localStorage;
+		private readonly IToastService _toast;
 
-		public AuthService(HttpClient http, NavigationManager nav, ILocalStorageService localStorage)
+		public AuthService(HttpClient http, NavigationManager nav, ILocalStorageService localStorage, IToastService toast)
 		{
 			_http = http;
 			_nav = nav;
 			_localStorage = localStorage;
+			_toast = toast;
 		}
 
 		public async Task<AuthResponse<User>> Login(AuthInfo auth)
@@ -36,15 +40,25 @@ namespace Prevent22.Client.Services
 		{
 			var result = await _http.PostAsJsonAsync("api/auth/check", userId);
 
-			if (result.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+			if (result.StatusCode == HttpStatusCode.Unauthorized)
 			{
 				IsLoggedIn = false;
 				UserService.user = null;
 				await _localStorage.ClearAsync();
 				_nav.NavigateTo("/", forceLoad: true);
+				return null;
 			}
 
 			var data = await result.Content.ReadFromJsonAsync<DbResponse<User>>();
+
+			if (data.SqlState == SqlState.UserIsBanned)
+			{
+				IsLoggedIn = false;
+				UserService.user = null;
+				await _localStorage.ClearAsync();
+				_nav.NavigateTo("/", forceLoad: true);
+				return null;
+			}
 
 			if (data.Data != null)
 			{

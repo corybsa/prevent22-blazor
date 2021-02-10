@@ -1,4 +1,6 @@
-﻿using Prevent22.Shared;
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
+using Prevent22.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +17,14 @@ namespace Prevent22.Client.Services
 	public class BaseService
 	{
 		private readonly HttpClient _http;
+		private readonly NavigationManager _nav;
+		private readonly ILocalStorageService _localStorage;
 
-		public BaseService(HttpClient http)
+		public BaseService(HttpClient http, NavigationManager nav, ILocalStorageService localStorage)
 		{
 			_http = http;
+			_nav = nav;
+			_localStorage = localStorage;
 		}
 
 		public static GridReadEventArgs GetEmptyGridArgs()
@@ -113,14 +119,15 @@ namespace Prevent22.Client.Services
 			}
 		}
 
-		private void CheckSqlState(byte state)
+		private async void CheckSqlState(byte state)
 		{
-			Console.WriteLine(state);
-
 			switch (state)
 			{
 				case SqlState.UserIsBanned:
-					Console.WriteLine("log out");
+					AuthService.IsLoggedIn = false;
+					UserService.user = null;
+					await _localStorage.ClearAsync();
+					_nav.NavigateTo("/", forceLoad: true);
 					break;
 			}
 		}
