@@ -50,6 +50,28 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[AllowAnonymous]
+		[HttpDelete("{volunteerId}")]
+		public async Task<IActionResult> DeleteVolunteer(int volunteerId)
+		{
+			DbResponse<Volunteer> response;
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Delete);
+				parameters.Add("VolunteerId", volunteerId);
+				response = await _helper.ExecStoredProcedure<Volunteer>("sp_Volunteers", parameters);
+			}
+			catch (ApiException<Volunteer> e)
+			{
+				response = e.Response;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
 		private string GenerateCode()
 		{
 			string str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

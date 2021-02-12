@@ -1,6 +1,8 @@
 ﻿@page "/profile"
 @attribute [Authorize]
+@implements IDisposable
 @inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject Services.IAuthService AuthService
 @inject Services.IUserService UserService
@@ -95,84 +97,98 @@
 				}
 			</TabStripTab>
 			<TabStripTab Title="Events">
-				<TelerikListView Data="events" Pageable="true">
-					<HeaderTemplate>
-						<div class="container">
-							<div class="row">
-								<div class="col-4 col-md-3">
-									<h6 class="mt-1 mb-1">Title</h6>
-								</div>
-								<div class="col-4 col-md-3">
-									<h6 class="mt-1 mb-1">Start</h6>
-								</div>
-								<div class="col-4 col-md-3">
-									<h6 class="mt-1 mb-1">End</h6>
-								</div>
-								<div class="col-md-3 d-none d-md-block">
-									<h6 class="mt-1 mb-1">Location</h6>
-								</div>
-							</div>
-						</div>
-					</HeaderTemplate>
-					<Template>
-						<div class="container">
-							<div class="row pt-2 pb-2">
-								<div class="col-4 col-md-3">
-									<p class="m-0">@context.Title</p>
-								</div>
-								<div class="col-4 col-md-3">
-									<p class="m-0">@context.Start.ToString("MM/dd/yyyy hh:mm tt")</p>
-								</div>
-								<div class="col-4 col-md-3">
-									<p class="m-0">@context.End.ToString("MM/dd/yyyy hh:mm tt")</p>
-								</div>
-								<div class="col-md-3 d-none d-md-block">
-									<p class="m-0">@(!string.IsNullOrEmpty(context.Location) ? context.Location : "No location set")</p>
+				@if (events.Count == 0)
+				{
+					<p>Not registered to volunteer for any events. <a href="/events">Click here to find an event!</a></p>
+				}
+				else
+				{
+					<TelerikListView Data="events" Pageable="true">
+						<HeaderTemplate>
+							<div class="container">
+								<div class="row">
+									<div class="col-4 col-md-3">
+										<h6 class="mt-1 mb-1">Title</h6>
+									</div>
+									<div class="col-4 col-md-3">
+										<h6 class="mt-1 mb-1">Start</h6>
+									</div>
+									<div class="col-4 col-md-3">
+										<h6 class="mt-1 mb-1">End</h6>
+									</div>
+									<div class="col-md-3 d-none d-md-block">
+										<h6 class="mt-1 mb-1">Location</h6>
+									</div>
 								</div>
 							</div>
-						</div>
-					</Template>
-				</TelerikListView>
+						</HeaderTemplate>
+						<Template>
+							<div class="container" style="cursor: pointer;" @onclick="() => EventDetails(context)">
+								<div class="row pt-2 pb-2">
+									<div class="col-4 col-md-3">
+										<p class="m-0">@context.Title</p>
+									</div>
+									<div class="col-4 col-md-3">
+										<p class="m-0">@context.Start.ToString("MM/dd/yyyy hh:mm tt")</p>
+									</div>
+									<div class="col-4 col-md-3">
+										<p class="m-0">@context.End.ToString("MM/dd/yyyy hh:mm tt")</p>
+									</div>
+									<div class="col-md-3 d-none d-md-block">
+										<p class="m-0">@(!string.IsNullOrEmpty(context.Location) ? context.Location : "No location set")</p>
+									</div>
+								</div>
+							</div>
+						</Template>
+					</TelerikListView>
+				}
 			</TabStripTab>
 			<TabStripTab Title="Warnings">
-				<TelerikListView Data="warnings" Pageable="true">
-					<HeaderTemplate>
-						<div class="container">
-							<div class="row">
-								<div class="col-4 col-md-3">
-									<h6 class="mt-1 mb-1">Issued</h6>
-								</div>
-								<div class="col-md-3 d-none d-md-block">
-									<h6 class="mt-1 mb-1">Issued By</h6>
-								</div>
-								<div class="col-4 col-md-3">
-									<h6 class="mt-1 mb-1">Reason</h6>
-								</div>
-								<div class="col-4 col-md-3">
-									<h6 class="mt-1 mb-1">Post Message</h6>
-								</div>
-							</div>
-						</div>
-					</HeaderTemplate>
-					<Template>
-						<div class="container">
-							<div class="row pt-2 pb-2">
-								<div class="col-4 col-md-3">
-									<p class="m-0">@context.WarningDate.ToString("MM/dd/yyyy hh:mm tt")</p>
-								</div>
-								<div class="col-md-3 d-none d-md-block">
-									<p class="m-0">@context.CreatedBy</p>
-								</div>
-								<div class="col-4 col-md-3">
-									<p class="m-0">@context.WarningReason</p>
-								</div>
-								<div class="col-4 col-md-3">
-									<p class="m-0">@((MarkupString)context.PostMessage)</p>
+				@if (warnings.Count == 0)
+				{
+					<p>You have not received any warnings!</p>
+				}
+				else
+				{
+					<TelerikListView Data="warnings" Pageable="true">
+						<HeaderTemplate>
+							<div class="container">
+								<div class="row">
+									<div class="col-4 col-md-3">
+										<h6 class="mt-1 mb-1">Issued</h6>
+									</div>
+									<div class="col-md-3 d-none d-md-block">
+										<h6 class="mt-1 mb-1">Issued By</h6>
+									</div>
+									<div class="col-4 col-md-3">
+										<h6 class="mt-1 mb-1">Reason</h6>
+									</div>
+									<div class="col-4 col-md-3">
+										<h6 class="mt-1 mb-1">Post Message</h6>
+									</div>
 								</div>
 							</div>
-						</div>
-					</Template>
-				</TelerikListView>
+						</HeaderTemplate>
+						<Template>
+							<div class="container">
+								<div class="row pt-2 pb-2">
+									<div class="col-4 col-md-3">
+										<p class="m-0">@context.WarningDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+									</div>
+									<div class="col-md-3 d-none d-md-block">
+										<p class="m-0">@context.CreatedBy</p>
+									</div>
+									<div class="col-4 col-md-3">
+										<p class="m-0">@context.WarningReason</p>
+									</div>
+									<div class="col-4 col-md-3">
+										<p class="m-0">@((MarkupString)context.PostMessage)</p>
+									</div>
+								</div>
+							</div>
+						</Template>
+					</TelerikListView>
+				}
 			</TabStripTab>
 		</TelerikTabStrip>
 	</div>
@@ -210,6 +226,8 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
 	}
 
 	private async Task GetEvents()
@@ -231,6 +249,8 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
 	}
 
 	private async Task GetWarnings()
@@ -252,6 +272,14 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+
+		StateHasChanged();
+	}
+
+	private void EventDetails(Event e)
+	{
+		Flyout.Open<Event>("Event details", typeof(Client.Flyout.Events.VolunteerDetails), e);
+		Flyout.OnSuccess = async () => await GetEvents();
 	}
 
 	private async Task Submit()
@@ -273,5 +301,10 @@
 		{
 			ToastService.ShowError(e.Message, "Error");
 		}
+	}
+
+	public void Dispose()
+	{
+		Flyout.OnSuccess = null;
 	}
 }

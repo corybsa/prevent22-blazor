@@ -14,5 +14,10 @@ namespace Prevent22.Client.Services
 		{
 			return await Post<Volunteer>("api/volunteers", volunteer);
 		}
+
+		public async Task<DbResponse<Volunteer>> DeleteVolunteer(int volunteerId)
+		{
+			return await Delete<Volunteer>($"api/volunteers/{volunteerId}");
+		}
 	}
 }

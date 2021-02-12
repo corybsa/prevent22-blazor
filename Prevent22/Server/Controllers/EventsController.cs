@@ -40,6 +40,28 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[AllowAnonymous]
+		[HttpGet("{eventId}")]
+		public async Task<IActionResult> GetEvent(int eventId)
+		{
+			DbResponse<Event> response;
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Get);
+				parameters.Add("EventId", eventId);
+				response = await _helper.ExecStoredProcedure<Event>("sp_Events", parameters);
+			}
+			catch (ApiException<Event> e)
+			{
+				response = e.Response;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
 		[Auth(Roles = new[] { SystemRole.Admin })]
 		[HttpPost]
 		public async Task<IActionResult> CreateEvents(Event e)

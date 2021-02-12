@@ -19,6 +19,7 @@ namespace Prevent22.Shared
 		public bool IsAllDay { get; set; }
 		public string RecurrenceRule { get; set; }
 		public int VolunteerCount { get; set; }
+		public int? VolunteerId { get; set; }
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext context)
 		{

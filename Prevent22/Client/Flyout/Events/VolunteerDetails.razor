@@ -1,0 +1,96 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IEventService EventService
+@inject Services.IVolunteerService VolunteerService
+@using System.Linq
+
+<EditForm Model="@Data" OnValidSubmit="CancelVoluneer">
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="eventTitle">Title</label>
+				<TelerikTextBox Id="eventTitle" @bind-Value="Data.Title" Enabled="false" Width="100%" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="eventDescription">Description</label>
+				<textarea class="form-control" id="eventDescription" rows="3" disabled @bind="Data.Description"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 form-check">
+			<TelerikCheckBox Id="isAllDay" @bind-Value="@Data.IsAllDay" Enabled="false" />
+			<label for="isAllDay">All day event?</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<div class="mb-2">
+				<label for="startDate">Start Date</label>
+				@if (!Data.IsAllDay)
+				{
+					<TelerikDateTimePicker Id="startDate" @bind-Value="Data.Start" Format="MM/dd/yyyy hh:mm tt" Enabled="false" Width="100%" />
+				}
+				else
+				{
+					<TelerikDatePicker Id="startDate" @bind-Value="Data.Start" Format="MM/dd/yyyy" Enabled="false" Width="100%" />
+				}
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="mb-2">
+				<label for="endDate">End Date</label>
+				@if (!Data.IsAllDay)
+				{
+					<TelerikDateTimePicker Id="endDate" @bind-Value="Data.End" Format="MM/dd/yyyy hh:mm tt" Enabled="false" Width="100%" />
+				}
+				else
+				{
+					<TelerikDatePicker Id="endDate" @bind-Value="Data.End" Format="MM/dd/yyyy" Enabled="false" Width="100%" />
+				}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="eventLocation">Location</label>
+				<TelerikTextBox Id="eventLocation" @bind-Value="Data.Location" Enabled="false" Width="100%" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-p22">Cancel Registration</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public Event Data { get; set; }
+
+	private async Task CancelVoluneer()
+	{
+		try
+		{
+			var res = await VolunteerService.DeleteVolunteer(Data.VolunteerId.Value);
+
+			if (res.Success)
+			{
+				ToastService.ShowSuccess("You are no longer registered for this event.", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

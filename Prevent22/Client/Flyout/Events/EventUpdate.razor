@@ -2,6 +2,19 @@
 @inject IToastService ToastService
 @inject Services.IFlyoutService Flyout
 @inject Services.IEventService EventService
+@inject Services.IVolunteerService VolunteerService
+
+<style>
+	.volunteer-link {
+		color: hsl(212, 97%, 43%);
+		cursor: pointer;
+	}
+
+		.volunteer-link:hover {
+			text-decoration: underline;
+			color: hsl(211, 100%, 35%);
+		}
+</style>
 
 <EditForm Model="@Data" OnValidSubmit="Submit">
 	<DataAnnotationsValidator />
@@ -71,6 +84,7 @@
 		</div>
 	</div>
 	<button type="submit" class="btn btn-p22">Submit</button>
+	<p class="volunteer-link" @onclick="Volunteer">I want to volunteer for this event!</p>
 </EditForm>
 
 @code {
@@ -90,6 +104,35 @@
 			else
 			{
 				ToastService.ShowSuccess("Event updated", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	private async Task Volunteer()
+	{
+		try
+		{
+			var v = new VolunteerRegister()
+			{
+				EventId = Data.EventId,
+				UserId = Services.UserService.user.UserId
+			};
+
+			var res = await VolunteerService.CreateVolunteer(v);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess("Registered to volunteer for event!", "Success");
 				Flyout.OnSuccess?.Invoke();
 				Flyout.Close();
 			}
