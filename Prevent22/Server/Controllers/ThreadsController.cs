@@ -122,7 +122,6 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("ThreadName", thread.ThreadName);
 				parameters.Add("CreatedBy", thread.CreatedBy);
 				parameters.Add("CreatedDate", thread.CreatedDate);
-				parameters.Add("LastPostDate", thread.LastPostDate);
 				parameters.Add("IsClosed", thread.IsClosed);
 				response = await _helper.ExecStoredProcedure<Thread>("sp_Threads", parameters);
 			}

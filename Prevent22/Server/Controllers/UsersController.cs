@@ -48,6 +48,27 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[HttpGet("warnings/{userId}")]
+		public async Task<IActionResult> GetUserWarnings(int userId)
+		{
+			DbResponse<Warning> response;
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Get);
+				parameters.Add("UserId", userId);
+				response = await _helper.ExecStoredProcedure<Warning>("sp_Warnings", parameters);
+			}
+			catch (ApiException<Warning> e)
+			{
+				response = e.Response;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
 		[HttpPost("update")]
 		public async Task<IActionResult> UpdateUser(User user)
 		{

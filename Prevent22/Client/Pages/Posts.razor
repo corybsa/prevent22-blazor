@@ -3,6 +3,7 @@
 @inject Services.IThreadService ThreadService
 @inject Services.IPostService PostService
 @inject Services.IBoardService BoardService
+@inject Services.IWarningService WarningService
 @inject IToastService ToastService
 @inject Services.IFlyoutService Flyout
 @inject NavigationManager NavigationManager
@@ -18,16 +19,23 @@
 		margin: 0;
 	}
 
-	.post-action-delete {
-		cursor: pointer;
-		color: red;
-		margin-left: 10px;
-	}
-
 	.post-action-edit {
 		cursor: pointer;
 		color: hsl(188, 78%, 41%);
 		font-size: 0.9rem;
+	}
+
+	.post-action-warn {
+		cursor: pointer;
+		color: hsl(45, 100%, 51%);
+		font-size: 0.9rem;
+		margin-left: 10px;
+	}
+
+	.post-action-delete {
+		cursor: pointer;
+		color: red;
+		margin-left: 10px;
 	}
 
 	@@media (max-width: 576px) {
@@ -77,6 +85,9 @@
 									<Authorized>
 										<span @onclick="() => EditPost(context)">
 											<i class="fa fa-pen post-action-edit" title="Edit post"></i>
+										</span>
+										<span @onclick="() => WarnUser(context)">
+											<i class="fa fa-exclamation-circle post-action-warn" title="Warn user"></i>
 										</span>
 										<span @onclick="() => DeletePost(context)">
 											<i class="fa fa-times post-action-delete" title="Delete post"></i>
@@ -208,6 +219,12 @@
 	private void EditPost(Post post)
 	{
 		Flyout.Open<Post>($"Edit Post #{post.PostId}", typeof(Client.Flyout.Posts.PostsUpdate), post);
+		Flyout.OnSuccess = async () => await GetData();
+	}
+
+	private void WarnUser(Post post)
+	{
+		Flyout.Open<Post>($"Warn {post.Author}", typeof(Client.Flyout.Warnings.WarningsAdd), post);
 		Flyout.OnSuccess = async () => await GetData();
 	}
 

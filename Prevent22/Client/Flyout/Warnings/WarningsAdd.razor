@@ -1,0 +1,131 @@
+﻿@using Prevent22.Shared
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IWarningService WarningService
+@inject Services.IUserService UserService
+
+<EditForm Model="@warning" OnValidSubmit="Submit">
+	<DataAnnotationsValidator />
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				@if (userWarnings != null)
+				{
+					<p>Previous warnings for this user:</p>
+
+					if (userWarnings.Count == 0)
+					{
+						<p>This user doesn't have any previous warnings</p>
+					}
+					else
+					{
+						<ul>
+							@foreach (var warn in userWarnings)
+							{
+								<li>@(warn.WarningReason)</li>
+							}
+						</ul>
+					}
+				}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="warningReason">Reason</label>
+				<textarea class="form-control" id="warningReason" rows="3" @bind="warning.WarningReason"></textarea>
+				<ValidationMessage For="@(() => warning.WarningReason)" />
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 form-check">
+			<TelerikCheckBox Id="shouldBanUser" @bind-Value="@warning.ShouldBanUser" />
+			<label for="shouldBanUser">Ban user</label>
+		</div>
+	</div>
+	@if (warning.ShouldBanUser)
+	{
+		<div class="row">
+			<div class="col-6">
+				<div class="mb-2">
+					<label for="banUntil">Ban until</label>
+					<TelerikDateTimePicker Id="banUntil" @bind-Value="warning.BanUntil" Min="DateTime.Now" Format="MM/dd/yyyy hh:mm tt" Width="100%" />
+					<ValidationMessage For="@(() => warning.BanUntil)" />
+				</div>
+			</div>
+		</div>
+	}
+	<button type="submit" class="btn btn-p22">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public Post Data { get; set; }
+
+	private List<Warning> userWarnings;
+	private Warning warning = new Warning();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetWarnings();
+	}
+
+	private async Task GetWarnings()
+	{
+		try
+		{
+			var res = await UserService.GetWarnings(Data.CreatedBy);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				userWarnings = res.Data;
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task Submit()
+	{
+		try
+		{
+			warning.CreatedById = Services.UserService.user.UserId;
+			warning.UserId = Data.CreatedBy;
+			warning.PostId = Data.PostId;
+			warning.WarningDate = DateTime.Now;
+
+			var res = await WarningService.CreateWarning(warning);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess("User warned", "Success");
+
+				if (warning.ShouldBanUser)
+				{
+					ToastService.ShowSuccess("User banned", "Success");
+				}
+
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

@@ -77,7 +77,7 @@
 									<p class="m-0">@context.PostCount</p>
 								</div>
 								<div class="col-5 col-md-4 text-center">
-									<p class="m-0">@Utils.GetHumanDate(context.LastPostDate)</p>
+									<p class="m-0">@(context.LastPostDate != null ? context.LastPostDate?.ToString("MM/dd/yyyy hh:mm tt") : "No Posts")</p>
 
 									@if (context.LastPostDate != null && !string.IsNullOrEmpty(context.LastPostAuthor))
 										{
