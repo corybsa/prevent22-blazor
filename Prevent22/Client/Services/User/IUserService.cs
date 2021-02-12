@@ -8,6 +8,7 @@ namespace Prevent22.Client.Services
 	{
 		Task<DbResponse<User>> GetUsers(GridReadEventArgs args);
 		Task<DbResponse<Warning>> GetWarnings(int userId);
+		Task<DbResponse<Event>> GetEvents(int userId);
 		Task<DbResponse<User>> UpdateUser(User user);
 	}
 }

@@ -69,6 +69,27 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[HttpGet("events/{userId}")]
+		public async Task<IActionResult> GetEvents(int userId)
+		{
+			DbResponse<Event> response;
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Get);
+				parameters.Add("UserId", userId);
+				response = await _helper.ExecStoredProcedure<Event>("sp_Volunteers", parameters);
+			}
+			catch (ApiException<Event> e)
+			{
+				response = e.Response;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
 		[HttpPost("update")]
 		public async Task<IActionResult> UpdateUser(User user)
 		{

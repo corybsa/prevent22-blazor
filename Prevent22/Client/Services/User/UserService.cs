@@ -23,6 +23,11 @@ namespace Prevent22.Client.Services
 			return await Get<Warning>($"api/users/warnings/{userId}");
 		}
 
+		public async Task<DbResponse<Event>> GetEvents(int userId)
+		{
+			return await Get<Event>($"api/users/events/{userId}");
+		}
+
 		public async Task<DbResponse<User>> UpdateUser(User user)
 		{
 			return await Post<User>("api/users/update", user);

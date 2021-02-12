@@ -1,0 +1,277 @@
+﻿@page "/profile"
+@attribute [Authorize]
+@inject IToastService ToastService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject Services.IAuthService AuthService
+@inject Services.IUserService UserService
+@using Prevent22.Shared
+@using System.Linq
+
+<div class="px-4 p-4">
+	<div class="container">
+		<h3>Profile</h3>
+
+		<TelerikTabStrip>
+			<TabStripTab Title="Bio">
+				@if (user != null)
+				{
+					<EditForm Model="user" OnValidSubmit="Submit">
+						<DataAnnotationsValidator />
+						<div class="row">
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="firstName">First Name</label>
+									<TelerikTextBox Id="firstName" @bind-Value="user.FirstName" AutoComplete="given-name" Width="100%" />
+									<ValidationMessage For="@(() => user.FirstName)" />
+								</div>
+							</div>
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="lastName">Last Name</label>
+									<TelerikTextBox @bind-Value="user.LastName" AutoComplete="family-name" Width="100%" />
+									<ValidationMessage For="@(() => user.LastName)" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="email">Email</label>
+									<TelerikTextBox Id="email" @bind-Value="user.Email" AutoComplete="email" InputMode="email" Width="100%" />
+									<ValidationMessage For="@(() => user.Email)" />
+								</div>
+							</div>
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="phone">Phone</label>
+									<TelerikTextBox Id="phone" @bind-Value="user.Phone" InputMode="tel" AutoComplete="tel" Width="100%" />
+									<ValidationMessage For="@(() => user.Phone)" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="country">Country</label>
+									<TelerikTextBox Id="country" @bind-Value="user.Country" AutoComplete="country-name" Width="100%" />
+									<ValidationMessage For="@(() => user.Country)" />
+								</div>
+							</div>
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="state">State</label>
+									<TelerikTextBox Id="state" @bind-Value="user.State" AutoComplete="address-level1" Width="100%" />
+									<ValidationMessage For="@(() => user.State)" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="city">City</label>
+									<TelerikTextBox Id="city" @bind-Value="user.City" AutoComplete="address-level2" Width="100%" />
+									<ValidationMessage For="@(() => user.City)" />
+								</div>
+							</div>
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="zipCode">Zip Code</label>
+									<TelerikTextBox Id="zipCode" @bind-Value="user.ZipCode" AutoComplete="postal-code" Width="100%" />
+									<ValidationMessage For="@(() => user.ZipCode)" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 col-sm-6">
+								<div class="mb-2">
+									<label for="address">Address</label>
+									<TelerikTextBox Id="address" @bind-Value="user.Address" AutoComplete="street-address" Width="100%" />
+									<ValidationMessage For="@(() => user.Address)" />
+								</div>
+							</div>
+						</div>
+						<button type="submit" class="btn btn-p22">Submit</button>
+					</EditForm>
+				}
+			</TabStripTab>
+			<TabStripTab Title="Events">
+				<TelerikListView Data="events" Pageable="true">
+					<HeaderTemplate>
+						<div class="container">
+							<div class="row">
+								<div class="col-4 col-md-3">
+									<h6 class="mt-1 mb-1">Title</h6>
+								</div>
+								<div class="col-4 col-md-3">
+									<h6 class="mt-1 mb-1">Start</h6>
+								</div>
+								<div class="col-4 col-md-3">
+									<h6 class="mt-1 mb-1">End</h6>
+								</div>
+								<div class="col-md-3 d-none d-md-block">
+									<h6 class="mt-1 mb-1">Location</h6>
+								</div>
+							</div>
+						</div>
+					</HeaderTemplate>
+					<Template>
+						<div class="container">
+							<div class="row pt-2 pb-2">
+								<div class="col-4 col-md-3">
+									<p class="m-0">@context.Title</p>
+								</div>
+								<div class="col-4 col-md-3">
+									<p class="m-0">@context.Start.ToString("MM/dd/yyyy hh:mm tt")</p>
+								</div>
+								<div class="col-4 col-md-3">
+									<p class="m-0">@context.End.ToString("MM/dd/yyyy hh:mm tt")</p>
+								</div>
+								<div class="col-md-3 d-none d-md-block">
+									<p class="m-0">@(!string.IsNullOrEmpty(context.Location) ? context.Location : "No location set")</p>
+								</div>
+							</div>
+						</div>
+					</Template>
+				</TelerikListView>
+			</TabStripTab>
+			<TabStripTab Title="Warnings">
+				<TelerikListView Data="warnings" Pageable="true">
+					<HeaderTemplate>
+						<div class="container">
+							<div class="row">
+								<div class="col-4 col-md-3">
+									<h6 class="mt-1 mb-1">Issued</h6>
+								</div>
+								<div class="col-md-3 d-none d-md-block">
+									<h6 class="mt-1 mb-1">Issued By</h6>
+								</div>
+								<div class="col-4 col-md-3">
+									<h6 class="mt-1 mb-1">Reason</h6>
+								</div>
+								<div class="col-4 col-md-3">
+									<h6 class="mt-1 mb-1">Post Message</h6>
+								</div>
+							</div>
+						</div>
+					</HeaderTemplate>
+					<Template>
+						<div class="container">
+							<div class="row pt-2 pb-2">
+								<div class="col-4 col-md-3">
+									<p class="m-0">@context.WarningDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+								</div>
+								<div class="col-md-3 d-none d-md-block">
+									<p class="m-0">@context.CreatedBy</p>
+								</div>
+								<div class="col-4 col-md-3">
+									<p class="m-0">@context.WarningReason</p>
+								</div>
+								<div class="col-4 col-md-3">
+									<p class="m-0">@((MarkupString)context.PostMessage)</p>
+								</div>
+							</div>
+						</div>
+					</Template>
+				</TelerikListView>
+			</TabStripTab>
+		</TelerikTabStrip>
+	</div>
+</div>
+
+@code {
+	private User user;
+	private List<Event> events;
+	private List<Warning> warnings;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetUserData();
+	}
+
+	private async Task GetUserData()
+	{
+		try
+		{
+			int userId = await LocalStorage.GetItemAsync<int>(LocalStorageKey.UserId);
+			var res = await AuthService.Check(userId);
+
+			if (res.Success)
+			{
+				user = res.Data.First();
+				await GetEvents();
+				await GetWarnings();
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	private async Task GetEvents()
+	{
+		try
+		{
+			var res = await UserService.GetEvents(user.UserId);
+
+			if (res.Success)
+			{
+				events = res.Data;
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	private async Task GetWarnings()
+	{
+		try
+		{
+			var res = await UserService.GetWarnings(user.UserId);
+
+			if (res.Success)
+			{
+				warnings = res.Data;
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await UserService.UpdateUser(user);
+
+			if (res.Success)
+			{
+				ToastService.ShowSuccess("Profile info saved", "Success");
+			}
+			else
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

@@ -50,8 +50,8 @@
 					Connect
 				</a>
 				<div class="dropdown-menu @EventsDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showEventsDropDown = !showEventsDropDown)">
-					<a class="dropdown-item" href="/forum">Forum</a>
-					<a class="dropdown-item" href="/events">Events</a>
+					<NavLink class="dropdown-item" href="/forum">Forum</NavLink>
+					<NavLink class="dropdown-item" href="/events">Events</NavLink>
 				</div>
 			</li>
 			<li class="nav-item dropdown @ResourcesDropDownClass">
@@ -59,9 +59,9 @@
 					Resources
 				</a>
 				<div class="dropdown-menu @ResourcesDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showResourcesDropDown = !showResourcesDropDown)">
-					<a class="dropdown-item" href="/resources/jobs">Job Opportunities</a>
-					<a class="dropdown-item disabled" href="#">Resume Templates</a>
-					<a class="dropdown-item disabled" href="#">Mental Health Clinics</a>
+					<NavLink class="dropdown-item" href="/resources/jobs">Job Opportunities</NavLink>
+					<NavLink class="dropdown-item disabled" href="#">Resume Templates</NavLink>
+					<NavLink class="dropdown-item disabled" href="#">Mental Health Clinics</NavLink>
 				</div>
 			</li>
 			<li class="nav-item">
@@ -74,10 +74,10 @@
 							@(Services.UserService.user != null ? Services.UserService.user.Username : "profile")
 						</a>
 						<div class="dropdown-menu dropdown-menu-right @ProfileDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showProfileDropDown = !showProfileDropDown)">
-							<a class="dropdown-item disabled" href="#">Profile</a>
+							<a class="dropdown-item" href="/profile">Profile</a>
 							<AuthorizeView Policy="@Policies.IsAdmin" Context="AdminDropdownContext">
 								<div class="dropdown-divider dropdown-admin-divider">Admin Options</div>
-								<a class="dropdown-item" href="/admin">Manage Users</a>
+								<NavLink class="dropdown-item" href="/admin">Manage Users</NavLink>
 							</AuthorizeView>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="#" @onclick="Logout">Logout</a>
