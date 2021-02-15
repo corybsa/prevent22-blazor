@@ -139,7 +139,18 @@
 					If you only give once a month, please keep us in mind next time.
 				</p>
 
-				<a href="#" class="btn btn-danger">Donate</a>
+				<form id="donate-btn" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+					<input type="hidden" name="charset" value="utf-8" tabindex="0">
+					<input type="hidden" name="cmd" value="_donations" tabindex="0">
+					<input type="hidden" name="business" value="2ANUZNGPL64YG" tabindex="0">
+					<input type="hidden" name="item_name" value="Support veterans in need" tabindex="0">
+					<input type="hidden" name="currency_code" value="USD" tabindex="0">
+					<input type="hidden" name="return" value="https://prevent22.com" tabindex="0">
+					<input type="hidden" name="cancel_return" value="https://prevent22.com" tabindex="0">
+					<input type="hidden" name="notify_url" value="https://www.prevent22.com/?wp_paypal_ipn=1" tabindex="0">
+					<input type="hidden" name="bn" value="WPPayPal_Donate_WPS_US" tabindex="0">
+					<button class="btn btn-danger" name="submit" onclick="$('#donate-btn')[0].requestSubmit()">Donate</button>
+				</form>
 			</div>
 		</div>
 	</div>
