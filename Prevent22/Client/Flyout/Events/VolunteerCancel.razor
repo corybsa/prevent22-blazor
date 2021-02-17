@@ -1,0 +1,53 @@
+﻿@using Prevent22.Shared
+@using System.ComponentModel.DataAnnotations
+@inject IToastService ToastService
+@inject Services.IFlyoutService Flyout
+@inject Services.IVolunteerService VolunteerService
+
+<EditForm Model="@Cancel" OnValidSubmit="Submit">
+	<div class="row">
+		<div class="col-12">
+			<div class="mb-2">
+				<label for="code">Enter the code emailed to you</label>
+				<TelerikTextBox Id="code" @bind-Value="Cancel.Code" Width="100%" />
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-p22">Cancel Registration</button>
+</EditForm>
+
+@code {
+	class CancelVolunteer
+	{
+		[Required(ErrorMessage = "Code is required.")]
+		public string Code { get; set; }
+	}
+
+	[Parameter]
+	public Event Data { get; set; }
+
+	private CancelVolunteer Cancel = new CancelVolunteer();
+
+	private async Task Submit()
+	{
+		try
+		{
+			var res = await VolunteerService.DeleteVolunteerByCode(Data.EventId, Cancel.Code);
+
+			if (!res.Success)
+			{
+				ToastService.ShowError(res.Info, "Error");
+			}
+			else
+			{
+				ToastService.ShowSuccess("Registration canceled.", "Success");
+				Flyout.OnSuccess?.Invoke();
+				Flyout.Close();
+			}
+		}
+		catch (Exception e)
+		{
+			ToastService.ShowError(e.Message, "Error");
+		}
+	}
+}

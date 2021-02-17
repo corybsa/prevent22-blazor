@@ -1,9 +1,13 @@
 ﻿using Dapper;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 using Prevent22.Server.Data;
 using Prevent22.Shared;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
@@ -15,10 +19,12 @@ namespace Prevent22.Server.Controllers
 	public class UsersController : ControllerBase
 	{
 		private readonly Helper _helper;
+		private readonly IConfiguration _config;
 
-		public UsersController(SqlConfiguration sql)
+		public UsersController(SqlConfiguration sql, IConfiguration config)
 		{
 			_helper = new Helper(sql);
+			_config = config;
 		}
 
 		[HttpPost]
@@ -95,7 +101,8 @@ namespace Prevent22.Server.Controllers
 		{
 			var response = new DbResponse<User>();
 
-			try {
+			try
+			{
 				var parameters = new DynamicParameters();
 				parameters.Add("StatementType", StatementType.Update);
 				parameters.Add("UserId", user.UserId);
@@ -114,7 +121,8 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("BannedById", user.BannedById);
 
 				response = await _helper.ExecStoredProcedure<User>("sp_Users", parameters);
-			} catch(Exception e)
+			}
+			catch (Exception e)
 			{
 				response.Success = false;
 				response.Info = e.Message;

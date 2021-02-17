@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 using Prevent22.Server.Data;
 using Prevent22.Shared;
 
@@ -14,17 +18,19 @@ namespace Prevent22.Server.Controllers
 	public class VolunteersController : ControllerBase
 	{
 		private readonly Helper _helper;
+		private readonly IConfiguration _config;
 
-		public VolunteersController(SqlConfiguration sql)
+		public VolunteersController(SqlConfiguration sql, IConfiguration config)
 		{
 			_helper = new Helper(sql);
+			_config = config;
 		}
 
 		[AllowAnonymous]
 		[HttpPost]
 		public async Task<IActionResult> CreateVolunteer(VolunteerRegister volunteer)
 		{
-			DbResponse<Event> response;
+			var response = new DbResponse<Event>();
 
 			try
 			{
@@ -39,11 +45,30 @@ namespace Prevent22.Server.Controllers
 				parameters.Add("Code", code);
 				response = await _helper.ExecStoredProcedure<Event>("sp_Volunteers", parameters);
 
-				// TODO: Email code to person
+				Event e = response.Data.First();
+				string server = _config.GetValue<string>("Email:Server");
+				string username = _config.GetValue<string>("Email:Username");
+				string password = _config.GetValue<string>("Email:Password");
+				string toName = "Cory Sandlin";
+				string toEmail = "corybsa@gmail.com";
+				string subject = $"Registration for {e.Title}";
+				string body = System.IO.File.ReadAllText("Data/html/emails/volunteer-register.html");
+				body = body.Replace("##EVENT_TITLE##", e.Title)
+						   .Replace("##EVENT_START##", e.Start.ToString("MMM dd yyyy hh:mm tt"))
+						   .Replace("##EVENT_END##", e.End.ToString("MMM dd yyyy hh:mm tt"))
+						   .Replace("##EVENT_LOCATION##", e.Location ?? "No location specified")
+						   .Replace("##REGISTRATION_CODE##", code);
+
+				_helper.SendEmail(toName, toEmail, subject, body, server, username, password);
 			}
 			catch (ApiException<Event> e)
 			{
 				response = e.Response;
+				return BadRequest(response);
+			}
+			catch (Exception e)
+			{
+				response.Info = e.Message;
 				return BadRequest(response);
 			}
 
@@ -72,6 +97,29 @@ namespace Prevent22.Server.Controllers
 			return Ok(response);
 		}
 
+		[AllowAnonymous]
+		[HttpDelete("{eventId}/{code}")]
+		public async Task<IActionResult> DeleteVolunteerByCode(int eventId, string code)
+		{
+			DbResponse<Volunteer> response;
+
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("StatementType", StatementType.Delete);
+				parameters.Add("EventId", eventId);
+				parameters.Add("Code", code);
+				response = await _helper.ExecStoredProcedure<Volunteer>("sp_Volunteers", parameters);
+			}
+			catch (ApiException<Volunteer> e)
+			{
+				response = e.Response;
+				return BadRequest(response);
+			}
+
+			return Ok(response);
+		}
+
 		private string GenerateCode()
 		{
 			string str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -88,7 +136,7 @@ namespace Prevent22.Server.Controllers
 				array[n] = value;
 			}
 
-			return new string(array).Substring(0, 10);
+			return new string(array).Substring(0, 6);
 		}
 	}
 }

@@ -10,14 +10,19 @@ namespace Prevent22.Client.Services
 	{
 		public VolunteerService(HttpClient http, NavigationManager nav, ILocalStorageService localStorage) : base(http, nav, localStorage) { }
 
-		public async Task<DbResponse<Volunteer>> CreateVolunteer(VolunteerRegister volunteer)
+		public async Task<DbResponse<Event>> CreateVolunteer(VolunteerRegister volunteer)
 		{
-			return await Post<Volunteer>("api/volunteers", volunteer);
+			return await Post<Event>("api/volunteers", volunteer);
 		}
 
 		public async Task<DbResponse<Volunteer>> DeleteVolunteer(int volunteerId)
 		{
 			return await Delete<Volunteer>($"api/volunteers/{volunteerId}");
+		}
+
+		public async Task<DbResponse<Volunteer>> DeleteVolunteerByCode(int eventId, string code)
+		{
+			return await Delete<Volunteer>($"api/volunteers/{eventId}/{code}");
 		}
 	}
 }

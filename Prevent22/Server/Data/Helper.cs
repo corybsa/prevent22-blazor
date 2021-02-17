@@ -10,6 +10,8 @@ using Prevent22.Shared;
 using System.Text;
 using Telerik.Blazor.Components;
 using Telerik.DataSource;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace Prevent22.Server
 {
@@ -314,6 +316,26 @@ namespace Prevent22.Server
 			catch
 			{
 				return false;
+			}
+		}
+
+		public void SendEmail(string toName, string toEmail, string subject, string body, string server, string username, string password)
+		{
+			var mailMessage = new MimeMessage();
+			mailMessage.From.Add(new MailboxAddress("Prevent 22 Support", "support@iamuncleguy.com"));
+			mailMessage.To.Add(new MailboxAddress(toName, toEmail));
+			mailMessage.Subject = subject;
+			mailMessage.Body = new TextPart("html")
+			{
+				Text = body
+			};
+
+			using (var smtpClient = new SmtpClient())
+			{
+				smtpClient.Connect(server, 465, true);
+				smtpClient.Authenticate(username, password);
+				smtpClient.Send(mailMessage);
+				smtpClient.Disconnect(true);
 			}
 		}
 	}

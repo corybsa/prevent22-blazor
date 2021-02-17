@@ -8,7 +8,8 @@ namespace Prevent22.Client.Services
 {
 	public interface IVolunteerService
 	{
-		Task<DbResponse<Volunteer>> CreateVolunteer(VolunteerRegister volunteer);
+		Task<DbResponse<Event>> CreateVolunteer(VolunteerRegister volunteer);
 		Task<DbResponse<Volunteer>> DeleteVolunteer(int volunteerId);
+		Task<DbResponse<Volunteer>> DeleteVolunteerByCode(int eventId, string code);
 	}
 }
