@@ -8,3 +8,5 @@
 		DotNet.invokeMethodAsync("Prevent22.Client", "OnBrowserResize").then(data => data);
 	}
 };
+
+navigator.serviceWorker.CACHE_VERSION = 1.0;

@@ -137,7 +137,7 @@ namespace Prevent22.Server
 						}
 						else
 						{
-							sb.Append(" ").Append(p).Append(",");
+							sb.Append(' ').Append(p).Append(',');
 						}
 					}
 				}
