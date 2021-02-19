@@ -74,7 +74,7 @@
 				<Template>
 					<div class="container post">
 						<div class="row post-header">
-							<div class="col-12" style="font-size: 0.8rem;">@context.CreatedDate.Value.ToString("MMMM dd, yyyy a\\t hh:mm tt")</div>
+							<div class="col-12" style="font-size: 0.8rem;">@Utils.ToLocalTime(context.CreatedDate.Value, "MMMM dd, yyyy a\\t hh:mm tt")</div>
 						</div>
 						<div class="row pt-2 pb-2">
 							<div class="col-12 col-sm-2 post-author">
@@ -96,7 +96,7 @@
 								</AuthorizeView>
 							</div>
 							<div class="col-12 col-sm-10 post-content">
-								<p class="m-0">@((MarkupString)(context.Message))</p>
+								<p class="m-0">@Utils.SanitizeHtml(context.Message)</p>
 							</div>
 						</div>
 					</div>

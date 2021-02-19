@@ -68,7 +68,7 @@
 									<p class="m-0">@context.PostCount</p>
 								</div>
 								<div class="col-4 col-md-2 text-center">
-									<p class="m-0">@(context.LastPostDate != null ? context.LastPostDate?.ToString("MM/dd/yyyy hh:mm tt") : "No Posts")</p>
+									<p class="m-0">@(context.LastPostDate != null ? Utils.ToLocalTime(context.LastPostDate.Value) : "No Posts")</p>
 
 									@if (context.LastPostDate != null)
 										{

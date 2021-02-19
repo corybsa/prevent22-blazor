@@ -129,10 +129,10 @@
 										<p class="m-0">@context.Title</p>
 									</div>
 									<div class="col-4 col-md-3">
-										<p class="m-0">@context.Start.ToString("MM/dd/yyyy hh:mm tt")</p>
+										<p class="m-0">@Utils.ToLocalTime(context.Start)</p>
 									</div>
 									<div class="col-4 col-md-3">
-										<p class="m-0">@context.End.ToString("MM/dd/yyyy hh:mm tt")</p>
+										<p class="m-0">@Utils.ToLocalTime(context.End)</p>
 									</div>
 									<div class="col-md-3 d-none d-md-block">
 										<p class="m-0">@(!string.IsNullOrEmpty(context.Location) ? context.Location : "No location set")</p>
@@ -173,7 +173,7 @@
 							<div class="container">
 								<div class="row pt-2 pb-2">
 									<div class="col-4 col-md-3">
-										<p class="m-0">@context.WarningDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+										<p class="m-0">@Utils.ToLocalTime(context.WarningDate)</p>
 									</div>
 									<div class="col-md-3 d-none d-md-block">
 										<p class="m-0">@context.CreatedBy</p>
@@ -182,7 +182,7 @@
 										<p class="m-0">@context.WarningReason</p>
 									</div>
 									<div class="col-4 col-md-3">
-										<p class="m-0">@((MarkupString)context.PostMessage)</p>
+										<p class="m-0">@Utils.SanitizeHtml(context.PostMessage)</p>
 									</div>
 								</div>
 							</div>
