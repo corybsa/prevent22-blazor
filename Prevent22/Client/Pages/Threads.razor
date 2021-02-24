@@ -70,8 +70,7 @@
 						<div class="row pt-2 pb-2">
 							<div class="thread-info" style="display: contents;" @onclick="@(() => GoToPosts(context))">
 								<div class="col-5 col-md-4">
-									<p class="m-0">@context.ThreadName <i class="fa fa-lock" style="display: none;"></i></p>
-									<p class="m-0" style="font-size: 0.9rem;">@context.ThreadName</p>
+									<p class="m-0">@Utils.SanitizeHtml(context.ThreadName).Value <i class="fa fa-lock" style="display: none;"></i></p>
 								</div>
 								<div class="col-2 text-center d-none d-md-block">
 									<p class="m-0">@context.PostCount</p>
@@ -81,7 +80,7 @@
 
 									@if (context.LastPostDate != null && !string.IsNullOrEmpty(context.LastPostAuthor))
 										{
-										<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
+										<p class="m-0" style="font-size: 0.9rem;">by @Utils.SanitizeHtml(context.LastPostAuthor).Value</p>
 										}
 								</div>
 							</div>
@@ -152,7 +151,7 @@
 	private void EditThread(Thread thread)
 	{
 
-		Flyout.Open<Thread>($"Edit {thread.ThreadName}", typeof(Client.Flyout.Threads.ThreadsUpdate), thread);
+		Flyout.Open<Thread>($"Edit {Utils.SanitizeHtml(thread.ThreadName).Value}", typeof(Client.Flyout.Threads.ThreadsUpdate), thread);
 		Flyout.OnSuccess = async () => await GetData();
 	}
 

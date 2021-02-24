@@ -49,6 +49,8 @@
 	{
 		try
 		{
+			user.Username = Utils.SanitizeHtml(user.Username).Value;
+
 			var res = await AuthService.Register(user);
 
 			if (res.Success)

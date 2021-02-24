@@ -22,7 +22,7 @@
 						<ul>
 							@foreach (var warn in userWarnings)
 							{
-								<li>@(warn.WarningReason)</li>
+								<li>@Utils.SanitizeHtml(warn.WarningReason)</li>
 							}
 						</ul>
 					}
@@ -103,6 +103,7 @@
 			warning.UserId = Data.CreatedBy;
 			warning.PostId = Data.PostId;
 			warning.WarningDate = DateTime.Now;
+			warning.WarningReason = Utils.SanitizeHtml(warning.WarningReason).Value;
 
 			var res = await WarningService.CreateWarning(warning);
 

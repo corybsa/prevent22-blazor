@@ -32,6 +32,8 @@
 	{
 		try
 		{
+			Data.Message = Utils.SanitizeHtml(Data.Message).Value;
+
 			var res = await PostService.UpdatePost(Data);
 
 			if (!res.Success)

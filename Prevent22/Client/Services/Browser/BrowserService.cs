@@ -31,5 +31,15 @@ namespace Prevent22.Client.Services
 		{
 			return await _js.InvokeAsync<int>("Prevent22.getWidth");
 		}
+
+		public async Task Install()
+		{
+			await _js.InvokeVoidAsync("Prevent22.install");
+		}
+
+		public async Task HideInstall()
+		{
+			await _js.InvokeVoidAsync("Prevent22.hideInstallPrompt");
+		}
 	}
 }

@@ -71,7 +71,7 @@
 				<Authorized>
 					<li class="nav-item nav-item-right dropdown @ProfileDropDownClass">
 						<a id="resourcesDropdown" class="nav-link dropdown-toggle" style="cursor: pointer;" role="button" aria-haspopup="true" aria-expanded="@showProfileDropDown" @onclick="(() => showProfileDropDown = !showProfileDropDown)">
-							@(Services.UserService.user != null ? Services.UserService.user.Username : "profile")
+							@(Services.UserService.user != null ? Utils.SanitizeHtml(Services.UserService.user.Username).Value : "profile")
 						</a>
 						<div class="dropdown-menu dropdown-menu-right @ProfileDropDownClass" aria-labelledby="resourcesDropdown" @onclick="(() => showProfileDropDown = !showProfileDropDown)">
 							<a class="dropdown-item" href="/profile">Profile</a>

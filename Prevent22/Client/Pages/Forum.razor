@@ -58,8 +58,8 @@
 						<div class="row pt-2 pb-2">
 							<div style="display: contents;" @onclick="@(() => GoToThreads(context.BoardId))">
 								<div class="col-4 col-md-4 col-lg-5">
-									<p class="m-0">@context.BoardName</p>
-									<p class="m-0" style="font-size: 0.9rem;">@context.BoardDescription</p>
+									<p class="m-0">@Utils.SanitizeHtml(context.BoardName).Value</p>
+									<p class="m-0" style="font-size: 0.9rem;">@Utils.SanitizeHtml(context.BoardDescription).Value</p>
 								</div>
 								<div class="col-2 text-center">
 									<p class="m-0">@context.ThreadCount</p>
@@ -72,7 +72,7 @@
 
 									@if (context.LastPostDate != null)
 										{
-										<p class="m-0" style="font-size: 0.9rem;">by @context.LastPostAuthor</p>
+										<p class="m-0" style="font-size: 0.9rem;">by @Utils.SanitizeHtml(context.LastPostAuthor).Value</p>
 										}
 								</div>
 							</div>
@@ -136,7 +136,7 @@
 
 	private void EditBoard(Board board)
 	{
-		Flyout.Open<Board>($"Edit {board.BoardName}", typeof(Client.Flyout.Boards.BoardsUpdate), board);
+		Flyout.Open<Board>($"Edit {Utils.SanitizeHtml(board.BoardName).Value}", typeof(Client.Flyout.Boards.BoardsUpdate), board);
 		Flyout.OnSuccess = async () => await GetData();
 	}
 

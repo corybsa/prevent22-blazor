@@ -41,6 +41,9 @@
 	{
 		try
 		{
+			Data.BoardName = Utils.SanitizeHtml(Data.BoardName).Value;
+			Data.BoardDescription = Utils.SanitizeHtml(Data.BoardDescription).Value;
+
 			var res = await BoardService.UpdateBoard(Data);
 
 			if (!res.Success)

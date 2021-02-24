@@ -160,6 +160,16 @@
 				Data.BannedById = null;
 			}
 
+			Data.FirstName = Utils.SanitizeHtml(Data.FirstName).Value;
+			Data.LastName = Utils.SanitizeHtml(Data.LastName).Value;
+			Data.Email = Utils.SanitizeHtml(Data.Email).Value;
+			Data.Country = Utils.SanitizeHtml(Data.Country).Value;
+			Data.State = Utils.SanitizeHtml(Data.State).Value;
+			Data.City = Utils.SanitizeHtml(Data.City).Value;
+			Data.ZipCode = Utils.SanitizeHtml(Data.ZipCode).Value;
+			Data.Address = Utils.SanitizeHtml(Data.Address).Value;
+			Data.Phone = Utils.SanitizeHtml(Data.Phone).Value;
+
 			var res = await UserService.UpdateUser(Data);
 
 			if (!res.Success)

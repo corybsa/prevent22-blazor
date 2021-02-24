@@ -42,16 +42,16 @@
 				<AllDayItemTemplate>
 					@{
 							var evnt = context as Event;
-						<div title="@evnt.Start.ToShortDateString() - @evnt.Title" style="height: 100%;" @onclick="() => MobileEditEvent(false, evnt)">
-							@evnt.Title (@evnt.VolunteerCount going)
+						<div title="@evnt.Start.ToShortDateString() - @Utils.SanitizeHtml(evnt.Title).Value" style="height: 100%;" @onclick="() => MobileEditEvent(false, evnt)">
+							@Utils.SanitizeHtml(evnt.Title).Value (@evnt.VolunteerCount going)
 						</div>
 					}
 				</AllDayItemTemplate>
 				<ItemTemplate>
 					@{
 							var evnt = context as Event;
-						<div title="@evnt.Start.ToShortDateString() - @evnt.Title" style="height: 100%;" @onclick="() => MobileEditEvent(false, evnt)">
-							@evnt.Title (@evnt.VolunteerCount going)
+						<div title="@evnt.Start.ToShortDateString() - @Utils.SanitizeHtml(evnt.Title).Value" style="height: 100%;" @onclick="() => MobileEditEvent(false, evnt)">
+							@Utils.SanitizeHtml(evnt.Title).Value (@evnt.VolunteerCount going)
 						</div>
 					}
 				</ItemTemplate>
@@ -127,12 +127,12 @@
 		// user is not logged in, or is not allowed to edit
 		if (user == null || user?.RoleId != SystemRole.Admin)
 		{
-			Flyout.Open<Event>($"Volunteer for {e.Title}", typeof(Client.Flyout.Events.VolunteerAdd), e);
+			Flyout.Open<Event>($"Volunteer for {Utils.SanitizeHtml(e.Title).Value}", typeof(Client.Flyout.Events.VolunteerAdd), e);
 			Flyout.OnSuccess = async () => await GetData();
 		}
 		else if (!args.IsNew) // an edit operation
 		{
-			Flyout.Open<Event>($"Update {e.Title}", typeof(Client.Flyout.Events.EventUpdate), e);
+			Flyout.Open<Event>($"Update {Utils.SanitizeHtml(e.Title).Value}", typeof(Client.Flyout.Events.EventUpdate), e);
 			Flyout.OnSuccess = async () => await GetData();
 		}
 		else // a create operation

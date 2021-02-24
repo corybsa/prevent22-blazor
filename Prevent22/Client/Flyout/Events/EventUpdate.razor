@@ -95,6 +95,10 @@
 	{
 		try
 		{
+			Data.Title = Utils.SanitizeHtml(Data.Title).Value;
+			Data.Description = Utils.SanitizeHtml(Data.Description).Value;
+			Data.Location = Utils.SanitizeHtml(Data.Location).Value;
+
 			var res = await EventService.UpdateEvent(Data);
 
 			if (!res.Success)

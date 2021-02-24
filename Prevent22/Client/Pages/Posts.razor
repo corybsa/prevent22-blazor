@@ -49,7 +49,7 @@
 	<div class="container">
 		@if (thread != null)
 		{
-			<h3>@thread.ThreadName</h3>
+			<h3>@Utils.SanitizeHtml(thread.ThreadName).Value</h3>
 		}
 
 		@if (posts == null)
@@ -78,8 +78,8 @@
 						</div>
 						<div class="row pt-2 pb-2">
 							<div class="col-12 col-sm-2 post-author">
-								<p class="m-0">@context.Author</p>
-								<p class="m-0" style="font-size: 0.8rem;"><em>@context.RoleName</em></p>
+								<p class="m-0">@Utils.SanitizeHtml(context.Author).Value</p>
+								<p class="m-0" style="font-size: 0.8rem;"><em>@Utils.SanitizeHtml(context.RoleName).Value</em></p>
 
 								<AuthorizeView Policy="@Policies.IsModerator" Context="postActionsContext">
 									<Authorized>
@@ -198,6 +198,8 @@
 
 		try
 		{
+			newPost.Message = Utils.SanitizeHtml(newPost.Message).Value;
+
 			var res = await PostService.CreatePost(newPost);
 
 			if (res.Success)
@@ -224,7 +226,7 @@
 
 	private void WarnUser(Post post)
 	{
-		Flyout.Open<Post>($"Warn {post.Author}", typeof(Client.Flyout.Warnings.WarningsAdd), post);
+		Flyout.Open<Post>($"Warn {Utils.SanitizeHtml(post.Author).Value}", typeof(Client.Flyout.Warnings.WarningsAdd), post);
 		Flyout.OnSuccess = async () => await GetData();
 	}
 

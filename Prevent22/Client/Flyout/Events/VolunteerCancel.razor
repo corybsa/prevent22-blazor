@@ -32,6 +32,8 @@
 	{
 		try
 		{
+			Cancel.Code = Utils.SanitizeHtml(Cancel.Code).Value;
+
 			var res = await VolunteerService.DeleteVolunteerByCode(Data.EventId, Cancel.Code);
 
 			if (!res.Success)

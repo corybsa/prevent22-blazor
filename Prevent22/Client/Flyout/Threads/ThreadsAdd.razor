@@ -56,7 +56,7 @@
 		{
 			// create new thread
 			var thread = new Thread();
-			thread.ThreadName = tap.ThreadName;
+			thread.ThreadName = Utils.SanitizeHtml(tap.ThreadName).Value;
 			thread.CreatedBy = Services.UserService.user.UserId;
 			thread.BoardId = Data;
 
@@ -83,7 +83,7 @@
 		{
 			var post = new Post();
 			post.ThreadId = thread.ThreadId;
-			post.Message = tap.Message;
+			post.Message = Utils.SanitizeHtml(tap.Message).Value;
 			post.CreatedBy = Services.UserService.user.UserId;
 
 			var res = await PostService.CreatePost(post);

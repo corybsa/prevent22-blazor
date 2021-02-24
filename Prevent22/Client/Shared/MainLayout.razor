@@ -49,6 +49,31 @@
 		color: white;
 	}
 
+	#install-prompt {
+		display: none;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background: black;
+	}
+
+	#install-prompt.show {
+		display: block !important;
+	}
+
+	#install-prompt > span {
+		color: white;
+	}
+
+	#install-prompt > #install-prompt-hide {
+		position: absolute;
+		top: 25px;
+		right: 25px;
+		color: white;
+		cursor: pointer;
+	}
+
 	@@media screen and (min-width: 1px) {
 		#flyout.open {
 			width: 100%;
@@ -98,6 +123,14 @@
 			Copyright &copy; @year by Prevent 22 Veterans 501(c)(19). All rights reserved.
 		</div>
 	</footer>
+
+	<div id="install-prompt" class="p-3 text-center">
+		<span class="pr-2" style="color: white;">Our app is installable! Click the button to get started!</span>
+		<button class="btn btn-p22" @onclick="BrowserService.Install">Install</button>
+		<span id="install-prompt-hide" @onclick="BrowserService.HideInstall">
+			<i class="fa fa-times"></i>
+		</span>
+	</div>
 </div>
 
 <div id="flyout" class="@(Flyout.IsOpen ? "open" : "closed")">

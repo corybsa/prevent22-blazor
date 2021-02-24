@@ -40,6 +40,9 @@
 	{
 		try
 		{
+			board.BoardName = Utils.SanitizeHtml(board.BoardName).Value;
+			board.BoardDescription = Utils.SanitizeHtml(board.BoardDescription).Value;
+
 			var res = await BoardService.CreateBoard(board);
 
 			if (!res.Success)

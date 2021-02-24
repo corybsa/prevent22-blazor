@@ -126,7 +126,7 @@
 							<div class="container" style="cursor: pointer;" @onclick="() => EventDetails(context)">
 								<div class="row pt-2 pb-2">
 									<div class="col-4 col-md-3">
-										<p class="m-0">@context.Title</p>
+										<p class="m-0">@Utils.SanitizeHtml(context.Title).Value</p>
 									</div>
 									<div class="col-4 col-md-3">
 										<p class="m-0">@Utils.ToLocalTime(context.Start)</p>
@@ -135,7 +135,7 @@
 										<p class="m-0">@Utils.ToLocalTime(context.End)</p>
 									</div>
 									<div class="col-md-3 d-none d-md-block">
-										<p class="m-0">@(!string.IsNullOrEmpty(context.Location) ? context.Location : "No location set")</p>
+										<p class="m-0">@(!string.IsNullOrEmpty(context.Location) ? Utils.SanitizeHtml(context.Location).Value : "No location set")</p>
 									</div>
 								</div>
 							</div>
@@ -176,10 +176,10 @@
 										<p class="m-0">@Utils.ToLocalTime(context.WarningDate)</p>
 									</div>
 									<div class="col-md-3 d-none d-md-block">
-										<p class="m-0">@context.CreatedBy</p>
+										<p class="m-0">@Utils.SanitizeHtml(context.CreatedBy).Value</p>
 									</div>
 									<div class="col-4 col-md-3">
-										<p class="m-0">@context.WarningReason</p>
+										<p class="m-0">@Utils.SanitizeHtml(context.WarningReason).Value</p>
 									</div>
 									<div class="col-4 col-md-3">
 										<p class="m-0">@Utils.SanitizeHtml(context.PostMessage)</p>
@@ -286,6 +286,16 @@
 	{
 		try
 		{
+			user.FirstName = Utils.SanitizeHtml(user.FirstName).Value;
+			user.LastName = Utils.SanitizeHtml(user.LastName).Value;
+			user.Email = Utils.SanitizeHtml(user.Email).Value;
+			user.Country = Utils.SanitizeHtml(user.Country).Value;
+			user.State = Utils.SanitizeHtml(user.State).Value;
+			user.City = Utils.SanitizeHtml(user.City).Value;
+			user.ZipCode = Utils.SanitizeHtml(user.ZipCode).Value;
+			user.Address = Utils.SanitizeHtml(user.Address).Value;
+			user.Phone = Utils.SanitizeHtml(user.Phone).Value;
+
 			var res = await UserService.UpdateUser(user);
 
 			if (res.Success)

@@ -68,6 +68,10 @@
 		{
 			try
 			{
+				volunteer.FirstName = Utils.SanitizeHtml(volunteer.FirstName).Value;
+				volunteer.LastName = Utils.SanitizeHtml(volunteer.LastName).Value;
+				volunteer.Email = Utils.SanitizeHtml(volunteer.Email).Value;
+
 				var res = await VolunteerService.CreateVolunteer(volunteer);
 
 				if (!res.Success)

@@ -97,7 +97,7 @@
 	private void UpdateUser(GridRowClickEventArgs e)
 	{
 		User user = (User)e.Item;
-		Flyout.Open<User>($"Update {user.Username}'s info", typeof(Client.Flyout.Users.UsersUpdate), user);
+		Flyout.Open<User>($"Update {Utils.SanitizeHtml(user.Username).Value}'s info", typeof(Client.Flyout.Users.UsersUpdate), user);
 		Flyout.OnSuccess = async () => await ReadPage(previousArgs);
 	}
 

@@ -43,6 +43,8 @@
 
 	public async void HandleLogin()
 	{
+		user.Username = Utils.SanitizeHtml(user.Username).Value;
+
 		var result = await AuthService.Login(user);
 
 		if (result.Success)

@@ -36,6 +36,8 @@
 	{
 		try
 		{
+			Data.ThreadName = Utils.SanitizeHtml(Data.ThreadName).Value;
+
 			var res = await ThreadService.UpdateThread(Data);
 
 			if (!res.Success)
